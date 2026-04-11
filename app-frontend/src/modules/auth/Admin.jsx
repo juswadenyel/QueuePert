@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../../assets/styles.css";// make sure path is correct
-import Admin from "./Admin";
 
-
-function Login() {
+function Admin() {
     const navigate = useNavigate();
     const [showForgot, setShowForgot] = useState(false);
+    
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -26,25 +25,24 @@ function Login() {
 
             {/* NAVBAR */}
             <div className="navbar">
-        <div className="logo">Queuepert</div>
+                <div className="logo">Queuepert</div>
 
-    <div className="nav-buttons">
-        <button onClick={() => navigate("/admin")}>Admin</button>
-    </div>
-
+                <div className="nav-buttons">
+                    <button onClick={() => navigate("/login")}>Back</button>
+                </div>
             </div>
 
             {/* LOGIN BOX */}
             <div className="containerLogin">
                 <h1>QueuePert</h1>
                 <p className="description">
-                    Please login using your university account
+                    Administrator Login
                 </p>
 
                 <form onSubmit={handleSubmit}>
 
                     {/* EMAIL */}
-                    <label className="input-label">University E-mail</label>
+                    <label className="input-label">Admin Account</label>
                     <input
                         type="email"
                         value={email}
@@ -87,6 +85,7 @@ function Login() {
                     </div>
                     </div>
                 )}
+                    
 
                     {/* LOGIN BUTTON */}
                     <button type="submit" className="action-btn">
@@ -99,4 +98,4 @@ function Login() {
     );
 }
 
-export default Login;
+export default Admin;

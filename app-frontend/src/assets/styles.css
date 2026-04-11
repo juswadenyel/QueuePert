@@ -34,6 +34,7 @@ body::before {
     display: flex; justify-content: space-between; align-items: center; z-index: 100;
 }
 
+
 .logo { color: #000; font-size: 24px; font-weight: bold; letter-spacing: 1px; }
 
 .nav-buttons { display: flex; gap: 12px; }
@@ -48,6 +49,12 @@ body::before {
     width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
+.containerLogin {
+    position: relative;
+    background: #C9A227; padding: 35px; border-radius: 15px;
+    width: 400px; text-align: center; margin-top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
 /* --- FORM ELEMENTS --- */
 h1 { margin-bottom: 5px; color: #000; }
 .description { font-size: 14px; color: #333; margin-bottom: 20px; }
@@ -60,6 +67,29 @@ input, select {
 
 .forgot-container { text-align: left; margin-top: -5px; margin-bottom: 15px; }
 .forgot-container a { font-size: 12px; color: #2575fc; text-decoration: none; }
+.forgot-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0, 0, 0, 0.6); /* dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 15px;
+}
+
+/* Inner box */
+.forgot-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    text-align: center;
+}
 
 .action-btn {
     width: 100%; padding: 12px; background: #7A1E2C; color: white;
