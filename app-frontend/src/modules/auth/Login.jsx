@@ -6,6 +6,7 @@ import Admin from "./Admin";
 
 function Login() {
     const navigate = useNavigate();
+    const [showForgot, setShowForgot] = useState(false);
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -62,8 +63,30 @@ function Login() {
 
                     {/* FORGOT PASSWORD */}
                     <div className="forgot-container">
-                        <a href="#">Forgot password?</a>
+                        <a href="#" onClick={(e) => {
+                        e.preventDefault();           // prevents page reload
+                        setShowForgot(!showForgot);   // toggle show/hide
+                    }}>
+                    Forgot password?
+                    </a>
                     </div>
+
+                    {showForgot && (
+                        <div className="forgot-overlay">
+                        <div className="forgot-content">
+                        <p>Please contact the Technical Support Group (TSG) via Teams or proceed to their office
+                             (3rd Floor, NGE Building) to reset your password.</p>
+            
+                    <button 
+                        type="button" 
+                            onClick={() => setShowForgot(false)}
+                                className="action-btn"
+                    >
+                        Close
+                    </button>
+                    </div>
+                    </div>
+                )}
 
                     {/* LOGIN BUTTON */}
                     <button type="submit" className="action-btn">
