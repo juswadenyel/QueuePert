@@ -30,17 +30,31 @@ body::before {
 
 /* --- NAVBAR --- */
 .navbar {
-    width: 100%; background-color: #C9A227; padding: 15px 30px;
-    display: flex; justify-content: space-between; align-items: center; z-index: 100;
+    width: 100%;
+    background-color: #C9A227;
+    padding: 15px 30px;
+
+    display: flex;
+    justify-content: space-between; /* THIS is correct */
+    align-items: center;
 }
 
+.logo {
+    color: #000;
+    font-size: 24px;
+    font-weight: bold;
+}
 
-.logo { color: #000; font-size: 24px; font-weight: bold; letter-spacing: 1px; }
+.navbar button {
+    background: #7A1E2C;
+    color: white;
+    border: none;
 
-.nav-buttons { display: flex; gap: 12px; }
-.nav-buttons button {
-    background: #7A1E2C; color: white; border: none;
-    padding: 8px 18px; border-radius: 5px; font-weight: bold; cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 6px;
+
+    font-weight: bold;
+    cursor: pointer;
 }
 
 /* --- CONTAINERS --- */
@@ -120,11 +134,60 @@ select:focus {
 }
 
 /* --- DASHBOARD ELEMENTS --- */
-.dashboard-wrapper { padding: 40px; display: flex; flex-direction: column; align-items: center; gap: 30px; margin-top: 60px; }
-.main-row { display: flex; gap: 30px; width: 100%; max-width: 1000px; justify-content: center; }
-.panel, .stat-box { background: #C9A227; border-radius: 20px; padding: 25px; box-shadow: 0 8px 20px rgba(0,0,0,0.3); text-align: center; }
-.serving-number { font-size: 80px; font-weight: bold; color: #7A1E2C; margin-top: 20px; }
-.stats-row { display: flex; gap: 15px; margin-top: 20px; }
-.stat-box { width: 160px; height: 100px; }
-.pill-container { display: flex; gap: 10px; margin-top: 20px; }
-.pill { background: #C9A227; width: 80px; height: 30px; border-radius: 15px; }
+.dashboard-wrapper { padding: 40px;
+    display: flex; flex-direction:
+    column; align-items:
+    center; gap: 30px;
+    margin-top: 60px;
+}
+
+.main-row { display: flex;
+    gap: 30px; width: 100%;
+    max-width: 1000px;
+    justify-content: center;
+}
+
+.panel, .stat-box { background: #C9A227;
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+    text-align: center;
+}
+
+.serving-number { font-size: 80px;
+    font-weight: bold;
+    color: #7A1E2C;
+    margin-top: 20px;
+}
+
+.stats-row { display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.stat-box { width: 160px;
+    height: 100px;
+}
+
+.pill-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.pill {
+    background: #C9A227;
+    width: 80px;
+    height: 30px;
+    border-radius: 15px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+    color: #7A1E2C;
+
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
