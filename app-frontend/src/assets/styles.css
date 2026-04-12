@@ -55,6 +55,11 @@ body::before {
     width: 400px; text-align: center; margin-top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
+.containerPriority {
+    background: #C9A227; padding: 35px; border-radius: 15px;
+    width: 700px; text-align: center; margin-top: 75px;box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+
 /* --- FORM ELEMENTS --- */
 h1 { margin-bottom: 5px; color: #000; }
 .description { font-size: 14px; color: #333; margin-bottom: 20px; }

@@ -89,7 +89,7 @@ function Login() {
                 )}
 
                     {/* LOGIN BUTTON */}
-                    <button type="submit" className="action-btn">
+                    <button type="submit" className="action-btn" onClick={() => navigate("/dashboard")}>
                         Login
                     </button>
 
