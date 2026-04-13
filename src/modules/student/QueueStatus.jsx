@@ -10,9 +10,9 @@ function QueueStatus({ queueData }) {
         <div className="logo">QueuePert</div>
 
         <div className="nav-buttons">
-          <button onClick={() => navigate("/dashboard")}>Home</button>
+          <button onClick={() => navigate("/student/dashboard")}>Home</button>
           <button onClick={() => {
-            navigate("/login");
+            navigate("/student/login");
             alert("Logged out");
           }}>
             Logout

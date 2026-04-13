@@ -28,7 +28,7 @@ function Admin() {
                 <div className="logo">Queuepert</div>
 
                 <div className="nav-buttons">
-                    <button onClick={() => navigate("/login")}>Back</button>
+                    <button onClick={() => navigate("/student/login")}>Back</button>
                 </div>
             </div>
 

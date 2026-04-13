@@ -14,17 +14,19 @@ function App() {
   const [queueData, setQueueData] = useState(null);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/dashboard" element={<StudentDashboard />} />
-        <Route path="/form" element={<PriorityForm setQueueData={setQueueData} />} />
-        <Route path="/queue" element={<QueueStatus queueData={queueData} />} />
-        <Route path="/admindash" element={<Dashboard />} />
-      </Routes>
-    </BrowserRouter>
+    <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/student/login" element={<Login />} />
+          <Route path="/admin/login" element={<Admin />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/form" element={<PriorityForm setQueueData={setQueueData} />} />
+          <Route path="/student/queue" element={<QueueStatus queueData={queueData} />} />
+          <Route path="/admindash" element={<Dashboard />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 }
 

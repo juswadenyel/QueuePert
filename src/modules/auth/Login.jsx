@@ -27,7 +27,7 @@ function Login() {
         <div className="logo">Queuepert</div>
 
     <div className="nav-buttons">
-        <button onClick={() => navigate("/admin")}>Admin</button>
+        <button onClick={() => navigate("/admin/login")}>Admin</button>
     </div>
 
             </div>
@@ -87,7 +87,7 @@ function Login() {
                 )}
 
                     {/* LOGIN BUTTON */}
-                    <button type="submit" className="action-btn" onClick={() => navigate("/dashboard")}>
+                    <button type="submit" className="action-btn" onClick={() => navigate("/student/dashboard")}>
                         Login
                     </button>
 

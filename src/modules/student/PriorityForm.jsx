@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-function PriorityForm({ setQueueData }) {
+function PriorityForm({setQueueData}) {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
@@ -29,7 +29,7 @@ function PriorityForm({ setQueueData }) {
       queueNumber: generatedQueue
     });
 
-    navigate("/queue");
+    navigate("/student/queue");
   };
 
   return (
@@ -39,11 +39,11 @@ function PriorityForm({ setQueueData }) {
         <div className="logo">QueuePert</div>
 
         <div className="nav-buttons">
-          <button onClick={() => navigate("/dashboard")}>Home</button>
-          <button onClick={() => navigate("/queue")}>View Queue</button>
+          <button onClick={() => navigate("/student/dashboard")}>Home</button>
+          <button onClick={() => navigate("/student/queue")}>View Queue</button>
           <button onClick={() => {
             alert("Logged out");
-            navigate("/login");
+            navigate("/student/login");
           }}>
             Logout</button>
         </div>
@@ -72,7 +72,7 @@ function PriorityForm({ setQueueData }) {
           onChange={handleChange}
         />
 
-        <label className="input-label">School Year</label>
+        <label className="input-label">Year Level</label>
         <select name="year" onChange={handleChange}>
           <option>-- Choose an option --</option>
           <option>1st Year</option>

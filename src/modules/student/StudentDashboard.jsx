@@ -10,9 +10,9 @@ function StudentDashboard() {
         <div className="logo">QueuePert</div>
 
         <div className="nav-buttons">
-          <button onClick={() => navigate("/queue")}>View Queue</button>
+          <button onClick={() => navigate("/student/queue")}>View Queue</button>
           <button onClick={() => {
-            navigate("/login");
+            navigate("/student/login");
             alert("Logged out");
           }}>
             Logout
@@ -25,18 +25,18 @@ function StudentDashboard() {
         <h1>QueuePert</h1>
         <p className="description">University Queue Management System</p>
 
-        <button className="action-btn" onClick={() => navigate("/form")}>
+        <button className="action-btn" onClick={() => navigate("/student/form")}>
           Get Priority Number
         </button>
 
         <button
             className="action-btn secondary-btn"
-            onClick={() => navigate("/queue")}
+            onClick={() => navigate("/student/queue")}
 >
             View Queue Status
        </button>
 
-        <button className="action-btn" onClick={() => navigate("/login")}>Logout</button>
+        <button className="action-btn" onClick={() => navigate("/student/login")}>Logout</button>
       </div>
     </div>
   );
