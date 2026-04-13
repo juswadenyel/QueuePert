@@ -88,7 +88,7 @@ function Admin() {
                     
 
                     {/* LOGIN BUTTON */}
-                    <button type="submit" className="action-btn" onClick={() => navigate("/admindash")}>
+                    <button type="submit" className="action-btn" onClick={() => navigate("/admin/dashboard")}>
                         Login
                     </button>
 
