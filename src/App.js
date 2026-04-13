@@ -23,7 +23,7 @@ function App() {
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/form" element={<PriorityForm setQueueData={setQueueData} />} />
           <Route path="/student/queue" element={<QueueStatus queueData={queueData} />} />
-          <Route path="/admindash" element={<Dashboard />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </>
