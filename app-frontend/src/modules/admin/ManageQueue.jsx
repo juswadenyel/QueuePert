@@ -1,58 +1,48 @@
 let queue = [];
-let servedTimes = []; // store wait times
+let servedTimes = [];
 let currentNumber = 1;
+let counters = Array(8).fill(null).map(() => []);
 
 const generateQueueId = () => {
-  const letterIndex = Math.floor((currentNumber - 1) / 1000);
+  const letterIndex = Math.floor((currentNumber - 1) / 999);
   const letter = String.fromCharCode(65 + letterIndex);
-  const number = String(currentNumber).padStart(3, "0");
-
-  return `${letter}${number}`;
+  const number = ((currentNumber - 1) % 999) + 1;
+  return `${letter}${String(number).padStart(3, "0")}`;
 };
 
-// ADD QUEUE WITH TIMESTAMP
 export const addQueue = () => {
-  if (queue.length >= 26000) return null;
-
-  const newQueue = {
-    id: generateQueueId(),
-    timeCreated: Date.now()
-  };
-
+  if (currentNumber > 25974) return null;
+  const newQueue = { id: generateQueueId(), timeCreated: Date.now() };
   queue.push(newQueue);
   currentNumber++;
-
-  return newQueue;
+  return newQueue.id;
 };
 
-// NEXT QUEUE (CALCULATE WAIT TIME HERE)
-export const nextQueue = () => {
-  if (queue.length === 0) return;
-
-  const served = queue.shift();
-
-  const waitTime = Date.now() - served.timeCreated; // milliseconds
-  servedTimes.push(waitTime);
+export const nextQueue = (counterIndex = 0) => {
+  if (counters[counterIndex].length > 0) counters[counterIndex].shift();
+  if (queue.length > 0) {
+    const next = queue.shift();
+    servedTimes.push(Date.now() - next.timeCreated);
+    counters[counterIndex].push(next.id);
+  }
 };
 
-export const deleteQueue = () => {
-  queue.pop();
+export const addToCounter = (counterIndex = 0) => {
+  if (counters[counterIndex].length >= 5) return alert("Counter Full!");
+  if (queue.length > 0) {
+    const next = queue.shift();
+    servedTimes.push(Date.now() - next.timeCreated);
+    counters[counterIndex].push(next.id);
+  }
 };
 
-// GETTERS
-export const getCurrentQueue = () => queue[0]?.id || "---";
-export const getNextInLine = () => queue[1]?.id || "---";
+export const deleteQueue = () => queue.pop();
+export const getNextInLine = () => queue[0]?.id || "---";
 export const getWaitingCount = () => queue.length;
-
-// FIX: only return IDs for UI
 export const getQueueList = () => queue.map(q => q.id);
-
-// AVERAGE WAIT TIME (in minutes)
+export const getCounters = () => counters;
 export const getAverageWaitTime = () => {
   if (servedTimes.length === 0) return 0;
-
   const total = servedTimes.reduce((a, b) => a + b, 0);
-  const avgMs = total / servedTimes.length;
-
-  return Math.round(avgMs / 60000); // convert to minutes
+  return Math.round((total / servedTimes.length) / 60000);
 };
