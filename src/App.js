@@ -19,7 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Navigate to="/student/login" />} />
           <Route path="/student/login" element={<Login />} />
-          <Route path="/admin/login" element={<Admin />} />
+          <Route path="/admin/login" element={<Admin />} />   
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/form" element={<PriorityForm setQueueData={setQueueData} />} />
           <Route path="/student/queue" element={<QueueStatus queueData={queueData} />} />
