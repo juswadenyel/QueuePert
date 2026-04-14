@@ -197,3 +197,135 @@ select:focus {
 
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
+
+/* --- DASHBOARD GRID & SCOPING CHANGES --- */
+
+.dashboard-page {
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-page .dashboard-wrapper {
+    flex: 1;
+    padding: 20px;
+    margin-top: 0;
+    display: flex;
+    justify-content: center;
+}
+
+.dashboard-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr 320px;
+    gap: 20px;
+    width: 100%;
+    max-width: 1600px;
+    height: 100%;
+}
+
+.left-column, .center-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.panel-header {
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.serving-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 30px !important;
+}
+
+.serving-title {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    text-align: center;
+    width: 100%;
+}
+
+.serving-number { 
+    font-size: 48px; /* Reduced from 80px to accommodate multiple numbers */
+    font-weight: bold;
+    color: #7A1E2C;
+    margin-top: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.serving-container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 50px;
+}
+
+.counter-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    text-align: left;
+}
+
+.counter-row {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.active-target {
+    background: rgba(122, 30, 44, 0.15);
+    border-radius: 10px;
+    padding: 5px 15px;
+    margin-left: -15px;
+}
+
+.unqueued-grid {
+    flex: 1;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+    padding-right: 8px;
+    align-content: start;
+}
+
+.unqueued-grid::-webkit-scrollbar { width: 8px; }
+.unqueued-grid::-webkit-scrollbar-thumb { background: #7A1E2C; border-radius: 10px; }
+
+.stat-val {
+    font-size: 24px;
+    font-weight: bold;
+    color: #7A1E2C;
+    margin-top: 5px;
+}
+
+.target-box {
+    background: #7A1E2C;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.target-box select {
+    width: auto;
+    margin: 0;
+    padding: 2px;
+    font-size: 12px;
+}
