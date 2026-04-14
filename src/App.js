@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
 import Login from './modules/auth/Login';
 import Admin from "./modules/auth/Admin";
@@ -17,9 +17,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Navigate to="/student/login" />} />
           <Route path="/student/login" element={<Login />} />
-          <Route path="/admin/login" element={<Admin />} />
+          <Route path="/admin/login" element={<Admin />} />   
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/form" element={<PriorityForm setQueueData={setQueueData} />} />
           <Route path="/student/queue" element={<QueueStatus queueData={queueData} />} />
