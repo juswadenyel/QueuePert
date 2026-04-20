@@ -1,25 +1,21 @@
 import React, { useState } from "react";
 import "../../assets/styles.css";
-import { 
-  addQueue, nextQueue, deleteQueue, getNextInLine, 
-  getWaitingCount, getQueueList, getAverageWaitTime, getCounters, addToCounter 
-} from "./ManageQueue";
+import { useQueue } from "./ManageQueue";
 
 const Dashboard = () => {
   const [target, setTarget] = useState(0);
-  const [next, setNext] = useState(getNextInLine());
-  const [waiting, setWaiting] = useState(getWaitingCount());
-  const [queueList, setQueueList] = useState(getQueueList());
-  const [avgWait, setAvgWait] = useState(getAverageWaitTime());
-  const [counters, setCounters] = useState(getCounters());
 
-  const refresh = () => {
-    setNext(getNextInLine());
-    setWaiting(getWaitingCount());
-    setQueueList(getQueueList());
-    setAvgWait(getAverageWaitTime());
-    setCounters([...getCounters()]);
-  };
+  const { 
+    counters, 
+    queueList, 
+    waitingCount, 
+    nextInLine, 
+    averageWaitTime,
+    addQueue, 
+    nextQueue, 
+    addToCounter, 
+    deleteQueue 
+  } = useQueue();
 
   return (
     <div className="dashboard-page">
@@ -38,21 +34,21 @@ const Dashboard = () => {
           <div className="left-column">
             <div className="panel admin-panel">
               <h3 className="panel-header">ADMIN PANEL</h3>
-              <button className="action-btn" onClick={() => { addQueue(); refresh(); }}>Add Queue</button>
-              <button className="action-btn" onClick={() => { addToCounter(target); refresh(); }}>Add To Counter</button>
+              <button className="action-btn" onClick={addQueue}>Add Queue</button>
+              <button className="action-btn" onClick={() => addToCounter(target)}>Add To Counter</button>
               <div className="target-box" style={{ background: '#7A1E2C', color: 'white', padding: '10px', borderRadius: '8px', marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
                 <span>Target:</span>
                 <select value={target} onChange={(e) => setTarget(parseInt(e.target.value))} style={{ width: 'auto', margin: 0 }}>
                   {counters.map((_, i) => <option key={i} value={i}>Counter {i + 1}</option>)}
                 </select>
               </div>
-              <button className="action-btn" onClick={() => { nextQueue(target); refresh(); }}>Next Queue</button>
-              <button className="action-btn" onClick={() => { deleteQueue(); refresh(); }}>Delete Queue</button>
+              <button className="action-btn" onClick={() => nextQueue(target)}>Next Queue</button>
+             <button className="action-btn" onClick={deleteQueue}>Delete Queue</button>
               <button className="action-btn">Set Queue Limit</button>
             </div>
-            <div className="panel stat-box">NEXT IN LINE<div className="stat-val">{next}</div></div>
-            <div className="panel stat-box">WAITING<div className="stat-val">{waiting}</div></div>
-            <div className="panel stat-box">AVG WAIT<div className="stat-val">{avgWait} min</div></div>
+            <div className="panel stat-box">NEXT IN LINE<div className="stat-val">{nextInLine}</div></div>
+            <div className="panel stat-box">WAITING<div className="stat-val">{waitingCount}</div></div>
+            <div className="panel stat-box">AVG WAIT<div className="stat-val">{averageWaitTime} min</div></div>
           </div>
 
           {/* CENTER COLUMN */}
@@ -60,7 +56,7 @@ const Dashboard = () => {
             <div className="panel your-queue">
               <h3 className="panel-header">YOUR QUEUE (Counter {target + 1}):</h3>
               <div className="serving-number">
-                {counters[target].length > 0 ? counters[target].join(", ") : "--"}
+                {counters[target] && counters[target].length > 0 ? counters[target].join(", ") : "--"}
               </div>
             </div>
             <div className="panel serving-panel">
@@ -77,6 +73,7 @@ const Dashboard = () => {
             </div>
           </div>
 
+          {/* RIGHT COLUMN */}
           <div className="right-column">
             <div className="panel unqueued-panel">
               <h3 className="panel-header">UNQUEUED NO:</h3>
