@@ -374,20 +374,35 @@ select:focus { outline: none; border-color: #7A1E2C; }
     padding: 8px 14px;
     border: none;
     border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(134, 15, 15, 0.3);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.cancel-queue-btn:hover {
+    background: #5c1521;
+}
+
+/* RIGHT PANEL (BETTER ALIGNMENT) */
+.queue-right-panel {
+    background: #C9A227;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
 
     display: flex;
     flex-direction: column;
-    min-width: 160px;
+    justify-content: flex-start;
+    margin-top: 57px;
+    width: 600px;
+    height: 650px;
 }
 
-.dropdown button {
-    background: none;
-    color: black;
-    padding: 10px;
-    border: none;
-    text-align: left;
-    cursor: pointer;
+/* NOW SERVING */
+.serving-highlight {
+    text-align: center;
+    margin-bottom: 25px;
 }
 
 .serving-label {
@@ -430,61 +445,4 @@ select:focus { outline: none; border-color: #7A1E2C; }
     justify-content: center;
     margin-top: 50px;
     margin-left: 380px;
-}
-
-/* --- PROFILE MENU --- */
-.profile-menu {
-    position: relative;
-    display: flex;       /* 👈 keeps it inline with other buttons */
-    align-items: center;
-}
-
-.dropdown {
-    position: absolute;
-    top: 40px;
-    right: 0;
-
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(134, 15, 15, 0.3);
-
-    display: flex;
-    flex-direction: column;
-    min-width: 160px;
-}
-
-.dropdown button {
-    background: none;
-    color: black;
-    padding: 10px;
-    border: none;
-    text-align: left;
-    cursor: pointer;
-}
-
-.dropdown button:hover {
-    background: #eee;
-}
-
-/* --- HISTORY TABLE --- */
-.history-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-}
-
-.history-table th {
-    background: #7A1E2C;
-    color: white;
-    padding: 10px;
-    text-align: left;
-}
-
-.history-table td {
-    padding: 10px;
-    border-bottom: 1px solid #ccc;
-}
-
-.history-table tr:hover {
-    background: rgba(0,0,0,0.05);
 }

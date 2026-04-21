@@ -26,8 +26,6 @@ function StudentDashboard() {
 >
             View Queue Status
        </button>
-
-        <button className="action-btn" onClick={() => navigate("/student/login")}>Logout</button>
       </div>
     </div>
   );
