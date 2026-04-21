@@ -8,6 +8,7 @@ import StudentDashboard from "./modules/student/StudentDashboard";
 import PriorityForm from "./modules/student/PriorityForm";
 import QueueStatus from './modules/student/QueueStatus';
 import Dashboard from './modules/admin/Dashboard';
+import TransactionHistory from "./modules/student/TransactionHistory";
 
 function App() {
   const [page, setPage] = useState("login");
@@ -24,6 +25,7 @@ function App() {
           <Route path="/student/form" element={<PriorityForm setQueueData={setQueueData} />} />
           <Route path="/student/queue" element={<QueueStatus queueData={queueData} />} />
           <Route path="/admin/dashboard" element={<Dashboard />} />
+          <Route path="/student/history" element={<TransactionHistory />} />
         </Routes>
       </BrowserRouter>
     </>

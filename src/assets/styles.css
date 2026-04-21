@@ -55,6 +55,12 @@ body::before {
     margin-right: 8px;
 }
 
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 2px; /* spacing between buttons */
+}
+
 /* --- CONTAINERS --- */
 .container {
     background: #C9A227; padding: 35px; border-radius: 15px;
@@ -275,4 +281,62 @@ select:focus { outline: none; border-color: #7A1E2C; }
     font-weight: bold;
     color: #7A1E2C;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* --- PROFILE MENU --- */
+.profile-menu {
+    position: relative;
+    display: flex;       /* 👈 keeps it inline with other buttons */
+    align-items: center;
+}
+
+.dropdown {
+    position: absolute;
+    top: 40px;
+    right: 0;
+
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(134, 15, 15, 0.3);
+
+    display: flex;
+    flex-direction: column;
+    min-width: 160px;
+}
+
+.dropdown button {
+    background: none;
+    color: black;
+    padding: 10px;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown button:hover {
+    background: #eee;
+}
+
+/* --- HISTORY TABLE --- */
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.history-table th {
+    background: #7A1E2C;
+    color: white;
+    padding: 10px;
+    text-align: left;
+}
+
+.history-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.history-table tr:hover {
+    background: rgba(0,0,0,0.05);
 }
