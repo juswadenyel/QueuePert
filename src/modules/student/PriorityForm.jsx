@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueue } from "../../context/QueueContext";
 
-function PriorityForm({setQueueData}) {
+function PriorityForm({ setQueueData }) {
   const navigate = useNavigate();
+
+  // ✅ CONNECT TO CONTEXT
+  const { addQueue, nextInLine } = useQueue();
 
   const [form, setForm] = useState({
     id: "",
@@ -22,12 +26,14 @@ function PriorityForm({setQueueData}) {
       return;
     }
 
-    const generatedQueue = "S-" + Math.floor(100 + Math.random() * 900);
+    // ✅ ADD TO ADMIN QUEUE
+     const generatedQueue = addQueue();
 
+    // ✅ USE SAME QUEUE NUMBER AS ADMIN
     setQueueData({
-      ...form,
-      queueNumber: generatedQueue
-    });
+    ...form,
+    priorityNumber: generatedQueue // ✅ ALWAYS HAS VALUE
+  });
 
     navigate("/student/queue");
   };
@@ -45,7 +51,8 @@ function PriorityForm({setQueueData}) {
             alert("Logged out");
             navigate("/student/login");
           }}>
-            Logout</button>
+            Logout
+          </button>
         </div>
       </div>
 
@@ -62,9 +69,7 @@ function PriorityForm({setQueueData}) {
           onChange={handleChange}
         />
 
-        <label className="input-label">
-          Full Name (Family Name, First Name, MI):
-        </label>
+        <label className="input-label">Full Name:</label>
         <input
           type="text"
           name="name"
