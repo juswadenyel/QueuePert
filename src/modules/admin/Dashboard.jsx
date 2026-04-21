@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import "../../assets/styles.css";
+<<<<<<< Updated upstream
 import { useQueue } from "./ManageQueue";
+=======
+import { useQueue } from "../../context/QueueContext";
+>>>>>>> Stashed changes
 import Navbar from "../../components/Navbar";
 
 const Dashboard = () => {

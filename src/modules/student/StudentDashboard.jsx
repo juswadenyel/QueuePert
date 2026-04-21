@@ -2,13 +2,14 @@ import { useNavigate } from "react-router-dom";
 import ProfileMenu from "./ProfileMenu";
 import Navbar from "../../components/Navbar";
 
+
 function StudentDashboard() {
   const navigate = useNavigate();
 
   return (
     <div className="login-page">
       {/* NAVBAR */}
-      <Navbar role="student" />
+     <Navbar role="student" />
 
       {/* CONTENT */}
       <div className="containerLogin">

@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useState } from "react";
+import { QueueProvider } from "./context/QueueContext";
 import Login from './modules/auth/Login';
 import Admin from "./modules/auth/Admin";
 import StudentDashboard from "./modules/student/StudentDashboard";
