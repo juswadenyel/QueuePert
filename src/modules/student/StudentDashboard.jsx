@@ -1,4 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import ProfileMenu from "./ProfileMenu";
+import Navbar from "../../components/Navbar";
+
 
 function StudentDashboard() {
   const navigate = useNavigate();
@@ -6,19 +9,7 @@ function StudentDashboard() {
   return (
     <div className="login-page">
       {/* NAVBAR */}
-      <div className="navbar">
-        <div className="logo">QueuePert</div>
-
-        <div className="nav-buttons">
-          <button onClick={() => navigate("/student/queue")}>View Queue</button>
-          <button onClick={() => {
-            navigate("/student/login");
-            alert("Logged out");
-          }}>
-            Logout
-          </button>
-        </div>
-      </div>
+     <Navbar role="student" />
 
       {/* CONTENT */}
       <div className="containerLogin">

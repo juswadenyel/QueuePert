@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import "../../assets/styles.css";
+<<<<<<< Updated upstream
+import { useQueue } from "./ManageQueue";
+=======
 import { useQueue } from "../../context/QueueContext";
+>>>>>>> Stashed changes
+import Navbar from "../../components/Navbar";
 
 const Dashboard = () => {
   const [target, setTarget] = useState(0);
@@ -19,13 +24,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-page">
-      <nav className="navbar">
-        <div className="logo">QueuePert</div>
-        <div className="nav-buttons">
-          <button onClick={() => alert("Daily Report Generated")}>View Daily Report</button>
-          <button onClick={() => (window.location.href = "/")}>Logout</button>
-        </div>
-      </nav>
+      <Navbar role="admin" />
 
       <div className="dashboard-wrapper">
         <div className="dashboard-layout">
