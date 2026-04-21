@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "../../assets/styles.css";
-import { useQueue } from "./ManageQueue";
+import { useQueue } from "../../context/QueueContext";
 
 const Dashboard = () => {
   const [target, setTarget] = useState(0);
