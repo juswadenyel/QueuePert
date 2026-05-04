@@ -28,7 +28,7 @@ function Admin() {
                 <div className="logo">Queuepert</div>
 
                 <div className="nav-buttons">
-                    <button onClick={() => navigate("/login")}>Back</button>
+                    <button onClick={() => navigate("/student/login")}>Back</button>
                 </div>
             </div>
 
@@ -88,7 +88,7 @@ function Admin() {
                     
 
                     {/* LOGIN BUTTON */}
-                    <button type="submit" className="action-btn">
+                    <button type="submit" className="action-btn" onClick={() => navigate("/admin/dashboard")}>
                         Login
                     </button>
 
