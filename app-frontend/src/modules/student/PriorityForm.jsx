@@ -1,8 +1,12 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useQueue } from "../../context/QueueContext";
 
 function PriorityForm({ setQueueData }) {
   const navigate = useNavigate();
+
+  // ✅ CONNECT TO CONTEXT
+  const { addQueue, nextInLine } = useQueue();
 
   const [form, setForm] = useState({
     id: "",
@@ -22,14 +26,16 @@ function PriorityForm({ setQueueData }) {
       return;
     }
 
-    const generatedQueue = "S-" + Math.floor(100 + Math.random() * 900);
+    // ✅ ADD TO ADMIN QUEUE
+     const generatedQueue = addQueue();
 
+    // ✅ USE SAME QUEUE NUMBER AS ADMIN
     setQueueData({
-      ...form,
-      queueNumber: generatedQueue
-    });
+    ...form,
+    priorityNumber: generatedQueue // ✅ ALWAYS HAS VALUE
+  });
 
-    navigate("/queue");
+    navigate("/student/queue");
   };
 
   return (
@@ -39,9 +45,14 @@ function PriorityForm({ setQueueData }) {
         <div className="logo">QueuePert</div>
 
         <div className="nav-buttons">
-          <button onClick={() => navigate("/dashboard")}>Home</button>
-          <button onClick={() => navigate("/queue")}>View Queue</button>
-          <button onClick={() => alert("Logged out")}>Logout</button>
+          <button onClick={() => navigate("/student/dashboard")}>Home</button>
+          <button onClick={() => navigate("/student/queue")}>View Queue</button>
+          <button onClick={() => {
+            alert("Logged out");
+            navigate("/student/login");
+          }}>
+            Logout
+          </button>
         </div>
       </div>
 
@@ -58,9 +69,7 @@ function PriorityForm({ setQueueData }) {
           onChange={handleChange}
         />
 
-        <label className="input-label">
-          Full Name (Family Name, First Name, MI):
-        </label>
+        <label className="input-label">Full Name:</label>
         <input
           type="text"
           name="name"
@@ -68,7 +77,7 @@ function PriorityForm({ setQueueData }) {
           onChange={handleChange}
         />
 
-        <label className="input-label">School Year</label>
+        <label className="input-label">Year Level</label>
         <select name="year" onChange={handleChange}>
           <option>-- Choose an option --</option>
           <option>1st Year</option>

@@ -3,13 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import Dashboard from './modules/admin/Dashboard';
+import { QueueProvider } from './modules/admin/ManageQueue';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  <QueueProvider>
     <App />
-  </React.StrictMode>
+  </QueueProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

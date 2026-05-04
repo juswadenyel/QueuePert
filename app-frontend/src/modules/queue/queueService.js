@@ -48,7 +48,7 @@ export async function resolveTicket(ticketNumber, resolution) {
   return res.json();
 }
 
-export async function setCounterStatus(counterId, status) {
+export async function setCounterStatus(status) {
   const res = await fetch(`${API_BASE}/queue/counter/status`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
@@ -77,7 +77,7 @@ export function subscribeToQueue(onUpdate, onError) {
   return () => es.close();
 }
 
-export function subscribeToTicket(ticketNumber, onUpdate, onError) {
+export function subscribeToTicket(ticketNumber, onUpdate) {
   const es = new EventSource(
     `${API_BASE}/queue/stream/ticket/${encodeURIComponent(ticketNumber)}`
   );
