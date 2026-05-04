@@ -1,32 +1,20 @@
 import { useNavigate } from "react-router-dom";
-import ProfileMenu from "./ProfileMenu";
 import Navbar from "../../components/Navbar";
-
+import DashboardCard from "./ui/DashboardCard";
 
 function StudentDashboard() {
   const navigate = useNavigate();
 
   return (
     <div className="login-page">
-      {/* NAVBAR */}
-     <Navbar role="student" />
 
-      {/* CONTENT */}
-      <div className="containerLogin">
-        <h1>QueuePert</h1>
-        <p className="description">University Queue Management System</p>
+      <Navbar role="student" />
 
-        <button className="action-btn" onClick={() => navigate("/student/form")}>
-          Get Priority Number
-        </button>
+      <DashboardCard
+        onGetNumber={() => navigate("/student/form")}
+        onViewQueue={() => navigate("/student/queue")}
+      />
 
-        <button
-            className="action-btn secondary-btn"
-            onClick={() => navigate("/student/queue")}
->
-            View Queue Status
-       </button>
-      </div>
     </div>
   );
 }
