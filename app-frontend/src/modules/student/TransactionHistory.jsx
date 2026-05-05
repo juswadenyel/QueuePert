@@ -6,9 +6,17 @@ function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
+  const loadData = () => {
     const data = JSON.parse(localStorage.getItem("transactions")) || [];
     setTransactions(data);
-  }, []);
+  };
+
+  loadData();
+
+  window.addEventListener("storage", loadData);
+
+  return () => window.removeEventListener("storage", loadData);
+}, []);
 
   return (
     <div className="dashboard-page">

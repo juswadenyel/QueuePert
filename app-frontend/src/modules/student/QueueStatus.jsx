@@ -22,9 +22,8 @@ function QueueStatus({ queueData }) {
   );
 
   const currentServing =
-    counters.flat().length > 0
-      ? counters.flat()[0]
-      : "--";
+  counters
+    .find(counter => counter.length > 0)?.[0] || null;
 
   const handleCancel = () => {
     cancelQueue(localTicket);
@@ -48,7 +47,7 @@ function QueueStatus({ queueData }) {
           />
 
           <QueueRight
-            currentServing={currentServing}
+            currentServing={currentServing?.id || "--"}
             counters={counters}
           />
 
