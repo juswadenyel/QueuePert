@@ -35,26 +35,33 @@ export const QueueProvider = ({ children }) => {
   // 🔹 Move to counter
   const nextQueue = (counterIndex = 0) => {
     setCounters((prevCounters) => {
-      const updated = [...prevCounters];
-      let current = [...updated[counterIndex]];
+      const newCounters = [...prevCounters];
+      let currentCounterList = [...newCounters[counterIndex]];
+
+      // 1. ALWAYS try to remove the oldest if there's someone in the container
+      if (currentCounterList.length > 0) {
+        currentCounterList.shift();
+      }
 
       setQueue((prevQueue) => {
+        // 2. If someone is waiting in the unqueued line
         if (prevQueue.length > 0) {
           const nextItem = prevQueue[0];
+          setServedTimes((prev) => [...prev, Date.now() - nextItem.timeCreated]);
 
-          setServedTimes((prev) => [...prev, 2 * 60000]);
-
-          if (current.length >= 5) current.shift();
-
-          updated[counterIndex] = [...current, nextItem.id];
-
+          // Append the new student to the already shifted list
+          newCounters[counterIndex] = [...currentCounterList, nextItem.id];
+          
+          // Remove from unqueued line
           return prevQueue.slice(1);
+        } else {
+          // 3. If line is empty, just update counter with the shifted (shorter) list
+          newCounters[counterIndex] = [...currentCounterList];
+          return prevQueue;
         }
-
-        return prevQueue;
       });
 
-      return updated;
+      return newCounters;
     });
   };
 
