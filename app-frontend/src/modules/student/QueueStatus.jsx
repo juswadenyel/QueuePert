@@ -47,7 +47,7 @@ function QueueStatus({ queueData }) {
           />
 
           <QueueRight
-            currentServing={currentServing?.id || "--"}
+            currentServing={currentServing?.id}
             counters={counters}
           />
 
