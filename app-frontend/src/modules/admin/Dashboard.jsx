@@ -18,6 +18,8 @@ const Dashboard = () => {
     deleteQueue 
   } = useQueue();
 
+
+
   return (
     <div className="dashboard-page">
       <Navbar role="admin" />
@@ -51,7 +53,9 @@ const Dashboard = () => {
             <div className="panel your-queue">
               <h3 className="panel-header">YOUR QUEUE (Counter {target + 1}):</h3>
               <div className="serving-number">
-                {counters[target] && counters[target].length > 0 ? counters[target].join(", ") : "--"}
+                {counters[target]?.length
+                  ? counters[target].map(item => item.id).join(", ")
+                  : "--"}
               </div>
             </div>
             <div className="panel serving-panel">
@@ -59,10 +63,16 @@ const Dashboard = () => {
               <div className="serving-container">
                 <div className="counter-list">
                   {counters.map((arr, i) => (
-                    <div key={i} className={`counter-row ${target === i ? "active-target" : ""}`}>
-                      Counter {i + 1}: {arr.length > 0 ? arr.join(", ") : ""}
-                    </div>
-                  ))}
+                  <div
+                    key={i}
+                    className={`counter-row ${target === i ? "active-target" : ""}`}
+                  >
+                    Counter {i + 1}:{" "}
+                    {arr?.length
+                      ? arr.map(item => item.id).join(", ")
+                      : ""}
+                  </div>
+                ))}
                 </div>
               </div>
             </div>
@@ -74,7 +84,11 @@ const Dashboard = () => {
               <h3 className="panel-header">UNQUEUED NO:</h3>
               <div className="unqueued-grid">
                 {queueList.length > 0 
-                  ? queueList.map((id, i) => <div key={i} className="grid-item" style={{ fontSize: '22px', fontWeight: 'bold' }}>{id}</div>)
+                  ? queueList.map((item, i) => (
+                        <div key={i} className="grid-item" style={{ fontSize: '22px', fontWeight: 'bold' }}>
+                          {item.id}
+                        </div>
+                      ))
                   : Array(21).fill("").map((d, i) => <div key={i} className="grid-item dash" style={{ opacity: 0.5 }}>{d}</div>)
                 }
               </div>

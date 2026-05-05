@@ -21,20 +21,24 @@ function PriorityForm({ setQueueData }) {
   };
 
   const handleSubmit = () => {
-    if (!form.id || !form.name) {
-      alert("Please fill all required fields");
-      return;
-    }
+  if (!form.id || !form.name) {
+    alert("Please fill all required fields");
+    return;
+  }
 
-    const generatedQueue = addQueue();
+  const newTransaction = addQueue({
+    studentId: form.id,   // ✅ IMPORTANT FIX
+    name: form.name,      // ✅ MUST match QueueContext
+    year: form.year,
+    semester: form.semester,
+    transaction: form.transaction
+  });
 
-    setQueueData({
-      ...form,
-      priorityNumber: generatedQueue
-    });
+  console.log("SENT TO QUEUE:", newTransaction);
 
-    navigate("/student/queue");
-  };
+  navigate("/student/queue");
+};
+
 
   return (
     <div className="login-page">
