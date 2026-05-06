@@ -65,25 +65,28 @@ export const QueueProvider = ({ children }) => {
   };
 
   /* ---------------- ADD TO COUNTER ---------------- */
-  const addToCounter = (counterIndex = 0) => {
+ const addToCounter = (counterIndex = 0) => {
+    // 1. Check the limit FIRST
+    if (counters[counterIndex].length >= 5) {
+      alert("Counter Full!");
+      return; // CRITICAL: This stops the function here so no one is added
+    }
+
     setQueue((prevQueue) => {
       if (prevQueue.length === 0) return prevQueue;
 
       const nextItem = prevQueue[0];
+      const remainingQueue = prevQueue.slice(1);
 
-      setCounters((prev) => {
-        const updated = [...prev];
-        const current = [...updated[counterIndex]];
+      setServedTimes((prev) => [...prev, Date.now() - nextItem.timeCreated]);
 
-        if (current.length >= 5) return prev;
-
-        current.push(nextItem);
-        updated[counterIndex] = current;
-
-        return updated;
+      setCounters((prevCounters) => {
+        const newCounters = [...prevCounters];
+        newCounters[counterIndex] = [...newCounters[counterIndex], nextItem];
+        return newCounters;
       });
 
-      return prevQueue.slice(1);
+      return remainingQueue;
     });
   };
 
