@@ -14,8 +14,26 @@ function Navbar({ role, variant }) {
         {/* STUDENT NAV */}
         {role === "student" && (
           <>
-            <button onClick={() => navigate("/student/queue")}>
-              View Queue
+            <ProfileMenu showHistory={true}/>
+          </>
+        )}
+
+        {/* VIEW QUEUE NAV */}
+        {role === "queue" && (
+          <>
+            <button onClick={() => navigate("/student/dashboard")}>
+              Home
+            </button>
+
+            <ProfileMenu showHistory={true}/>
+          </>
+        )}
+
+        {/* PRIORITY FORM NAV */}
+        {role === "form" && (
+          <>
+            <button onClick={() => navigate("/student/dashboard")}>
+              Home
             </button>
 
             <ProfileMenu showHistory={true}/>

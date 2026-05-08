@@ -33,7 +33,7 @@ function QueueStatus({ queueData }) {
   return (
     <div className="dashboard-page">
 
-      <Navbar role="student" />
+      <Navbar role="queue" />
 
       <div className="dashboard-wrapper-student">
         <div className="queue-status-layout">

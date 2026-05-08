@@ -43,7 +43,7 @@ function PriorityForm({ setQueueData }) {
   return (
     <div className="login-page">
 
-      <Navbar role="student" />
+      <Navbar role="form" />
 
       <PriorityFormCard
         onChange={handleChange}
