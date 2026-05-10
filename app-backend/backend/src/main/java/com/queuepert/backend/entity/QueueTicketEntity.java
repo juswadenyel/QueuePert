@@ -1,5 +1,7 @@
 package com.queuepert.backend.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -25,18 +27,18 @@ public class QueueTicketEntity {
 
     private String priorityNumber;
     private String transactionType;
-    private String amount;
+    private Double amount;
     private String semester;
     private String status;
     private String counterNumber;
-    private String timeCreated;
-    private String timeServed;
+    private LocalDateTime timeCreated;
+    private LocalDateTime timeServed;
 
     public QueueTicketEntity() {
     }
 
     public QueueTicketEntity(int queueId, StudentEntity student, AdminEntity admin, String priorityNumber, String transactionType,
-            String amount, String semester, String status, String counterNumber, String timeCreated, String timeServed) {
+            Double amount, String semester, String status, String counterNumber, LocalDateTime timeCreated, String timeServed) {
         this.queueId = queueId;
         this.student = student;
         this.admin = admin;
@@ -99,11 +101,11 @@ public class QueueTicketEntity {
         this.transactionType = transactionType;
     }
 
-    public String getAmount() {
+    public Double getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -123,11 +125,11 @@ public class QueueTicketEntity {
         this.counterNumber = counterNumber;
     }
 
-    public String getTimeCreated() {
+    public LocalDateTime getTimeCreated() {
         return timeCreated;
     }
 
-    public void setTimeCreated(String timeCreated) {
+    public void setTimeCreated(LocalDateTime timeCreated) {
         this.timeCreated = timeCreated;
     }
 
