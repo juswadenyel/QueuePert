@@ -26,6 +26,7 @@ public class QueueTicketEntity {
     private String priorityNumber;
     private String transactionType;
     private String amount;
+    private String semester;
     private String status;
     private String counterNumber;
     private String timeCreated;
@@ -35,13 +36,14 @@ public class QueueTicketEntity {
     }
 
     public QueueTicketEntity(int queueId, StudentEntity student, AdminEntity admin, String priorityNumber, String transactionType,
-            String amount, String status, String counterNumber, String timeCreated, String timeServed) {
+            String amount, String semester, String status, String counterNumber, String timeCreated, String timeServed) {
         this.queueId = queueId;
         this.student = student;
         this.admin = admin;
         this.priorityNumber = priorityNumber;
         this.transactionType = transactionType;
         this.amount = amount;
+        this.semester = semester;
         this.status = status;
         this.counterNumber = counterNumber;
         this.timeCreated = timeCreated;
@@ -135,5 +137,13 @@ public class QueueTicketEntity {
 
     public void setTimeServed(String timeServed) {
         this.timeServed = timeServed;
+    }
+
+    public String getSemester() {
+        return semester;
+    }
+
+    public void setSemester(String semester) {
+        this.semester = semester;
     }
 }

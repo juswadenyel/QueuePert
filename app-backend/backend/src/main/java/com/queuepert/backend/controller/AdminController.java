@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.queuepert.backend.entity.AdminEntity;
-import com.queuepert.backend.entity.StudentEntity;
 import com.queuepert.backend.service.AdminService;
-import com.queuepert.backend.service.StudentService;
+
 
 @RestController
 @RequestMapping("/admin")
