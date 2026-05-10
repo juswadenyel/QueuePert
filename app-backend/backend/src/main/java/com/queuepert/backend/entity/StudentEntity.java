@@ -1,0 +1,85 @@
+package com.queuepert.backend.entity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+
+@Entity
+@Table(name = "tblstudent")
+public class StudentEntity {
+    @Id
+    private int studentId;
+    private String universityEmail;
+    private String password;
+    private String firstName;
+    private String lastName;
+    private char middleInitial;
+    private String course;
+    private int yearLevel;
+
+
+    public StudentEntity(int studentId, String universityEmail, String password, String firstName, String lastName, char middleInitial,
+            String course, int yearLevel) {
+        this.studentId = studentId;
+        this.universityEmail = universityEmail;
+        this.password = password;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.middleInitial = middleInitial;
+        this.course = course;
+        this.yearLevel = yearLevel;
+    }
+
+
+    public int getStudentId() {
+        return studentId;
+    }
+
+    public int getPassword() {
+        return password;
+    }
+
+
+
+    public String getUniversityEmail() {
+        return universityEmail;
+    }
+
+
+
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+
+
+
+    public String getLastName() {
+        return lastName;
+    }
+
+
+
+
+    public char getMiddleInitial() {
+        return middleInitial;
+    }
+
+
+
+
+    public String getCourse() {
+        return course;
+    }
+
+
+
+    public int getYearLevel() {
+        return yearLevel;
+    }
+
+
+
+
+}
