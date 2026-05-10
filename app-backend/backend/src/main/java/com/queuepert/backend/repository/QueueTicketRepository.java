@@ -1,5 +1,5 @@
 package com.queuepert.backend.repository;
 
-public class QueueTicketRepository {
+public interface QueueTicketRepository {
 
 }
