@@ -34,7 +34,7 @@ public class QueueTicketEntity {
     public QueueTicketEntity() {
     }
 
-    public QueueTicketEntity(int queueId, StudentEntity student, AdminEntity admin, String priorityNumber, String transacitonType,
+    public QueueTicketEntity(int queueId, StudentEntity student, AdminEntity admin, String priorityNumber, String transactionType,
             String amount, String status, String counterNumber, String timeCreated, String timeServed) {
         this.queueId = queueId;
         this.student = student;
@@ -89,12 +89,12 @@ public class QueueTicketEntity {
         this.priorityNumber = priorityNumber;
     }
 
-    public String getTransacitonType() {
-        return transacitonType;
+    public String getTransactionType() {
+        return transactionType;
     }
 
-    public void setTransacitonType(String transacitonType) {
-        this.transacitonType = transacitonType;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
     public String getAmount() {
