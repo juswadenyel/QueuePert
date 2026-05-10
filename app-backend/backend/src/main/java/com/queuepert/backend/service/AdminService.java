@@ -3,7 +3,6 @@ package com.queuepert.backend.service;
 import org.springframework.stereotype.Service;
 
 import com.queuepert.backend.entity.AdminEntity;
-import com.queuepert.backend.entity.StudentEntity;
 import com.queuepert.backend.repository.AdminRepository;
 
 @Service
