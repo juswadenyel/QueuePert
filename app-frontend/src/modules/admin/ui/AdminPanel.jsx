@@ -25,14 +25,7 @@ const AdminPanel = ({ target, setTarget, counters, onAdd, onAddToCounter, onNext
       <button className="action-btn" onClick={() => onNext(target)}>
         Next Queue
       </button>
-      
-      <button className="action-btn" onClick={onDelete}>
-        Delete Queue
-      </button>
-      
-      <button className="action-btn">
-        Set Queue Limit
-      </button>
+
     </div>
   );
 };

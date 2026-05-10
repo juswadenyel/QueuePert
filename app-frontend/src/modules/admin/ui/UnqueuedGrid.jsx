@@ -11,7 +11,7 @@ const UnqueuedGrid = ({ queueList }) => (
             </div>
           ))
         : Array(21).fill("").map((_, i) => (
-            <div key={i} className="grid-item dash" style={{ opacity: 0.5 }}>-</div>
+            <div key={i} className="grid-item dash" style={{ opacity: 0.5 }}></div>
           ))
       }
     </div>

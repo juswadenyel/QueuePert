@@ -130,6 +130,15 @@ export const QueueProvider = ({ children }) => {
     );
   };
 
+  function updateStudent(counterIndex, studentId, updatedData) {
+  setCounters(prevCounters => {
+    const newCounters = [...prevCounters];
+      newCounters[counterIndex] = newCounters[counterIndex].map(student => 
+        student.id === studentId ? { ...student, ...updatedData } : student
+      );
+    return newCounters;
+    });
+  };
   /* ---------------- VALUES ---------------- */
   const value = {
     queueList: queue,
@@ -150,11 +159,12 @@ export const QueueProvider = ({ children }) => {
     addToCounter,
     nextQueue,
     deleteQueue,
-    cancelQueue
-  };
+    cancelQueue,
+    updateStudent
 
+  };
   return (
-    <QueueContext.Provider value={value}>
+    <QueueContext.Provider value={value} >
       {children}
     </QueueContext.Provider>
   );
