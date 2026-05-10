@@ -90,11 +90,11 @@ public class QueueTicketEntity {
     }
 
     public String getTransacitonType() {
-        return transacitonType;
+        return transactionType;
     }
 
     public void setTransacitonType(String transacitonType) {
-        this.transacitonType = transacitonType;
+        this.transactionType = transacitonType;
     }
 
     public String getAmount() {
