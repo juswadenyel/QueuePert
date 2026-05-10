@@ -8,7 +8,7 @@ import jakarta.persistence.Table;
 @Table(name = "tblstudent")
 public class StudentEntity {
     @Id
-    private int studentId;
+    private String studentId;
     private String universityEmail;
     private String password;
     private String firstName;
@@ -17,8 +17,10 @@ public class StudentEntity {
     private String course;
     private int yearLevel;
 
+    public StudentEntity() {
+    }
 
-    public StudentEntity(int studentId, String universityEmail, String password, String firstName, String lastName, char middleInitial,
+    public StudentEntity(String studentId, String universityEmail, String password, String firstName, String lastName, char middleInitial,
             String course, int yearLevel) {
         this.studentId = studentId;
         this.universityEmail = universityEmail;
@@ -31,7 +33,7 @@ public class StudentEntity {
     }
 
 
-    public int getStudentId() {
+    public String getStudentId() {
         return studentId;
     }
 

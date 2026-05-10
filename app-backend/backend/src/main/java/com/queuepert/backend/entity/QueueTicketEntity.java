@@ -19,7 +19,10 @@ public class QueueTicketEntity {
     private String timeCreated;
     private String timeServed;
 
+    public QueueTicketEntity() {
+    }
 
+    
     public QueueTicketEntity(int queueId, int studentId, int adminId, String priorityNumber, String transacitonType,
             String amount, String status, String counterNumber, String timeCreated, String timeServed) {
         this.queueId = queueId;
