@@ -24,7 +24,7 @@ public class QueueTicketEntity {
     private AdminEntity admin;
 
     private String priorityNumber;
-    private String transacitonType;
+    private String transactionType;
     private String amount;
     private String status;
     private String counterNumber;
@@ -40,7 +40,7 @@ public class QueueTicketEntity {
         this.student = student;
         this.admin = admin;
         this.priorityNumber = priorityNumber;
-        this.transacitonType = transacitonType;
+        this.transactionType = transactionType;
         this.amount = amount;
         this.status = status;
         this.counterNumber = counterNumber;
