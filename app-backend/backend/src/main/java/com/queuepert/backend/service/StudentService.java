@@ -1,5 +1,25 @@
 package com.queuepert.backend.service;
 
-public class StudentService {
+import org.springframework.stereotype.Service;
 
+import com.queuepert.backend.entity.StudentEntity;
+import com.queuepert.backend.repository.StudentRepository;
+
+
+@Service
+public class StudentService {
+    
+    StudentRepository studentRepository;
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
+    public StudentEntity createStudent(StudentEntity student) {
+        return studentRepository.save(student);
+    }
+
+    public StudentEntity getStudentById(Integer id) {
+        return studentRepository.findById(id).orElse(null);
+    }
+    
 }
