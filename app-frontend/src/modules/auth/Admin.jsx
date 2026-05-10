@@ -10,16 +10,42 @@ function Admin() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
+    e.preventDefault();
 
-        console.log("Email:", email);
-        console.log("Password:", password);
+    try {
 
-        // redirect to dashboard
-        //navigate("/dashboard");
-    };
+        const response = await fetch(
+            "http://localhost:8080/admin/login",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    universityEmail: email,
+                    password: password
+                })
+            }
+        );
 
+        const data = await response.text();
+
+        if(data === "LOGIN_SUCCESS") {
+            navigate("/admin/dashboard");
+        }
+        else if(data === "EMAIL_NOT_FOUND") {
+            alert("Email not found");
+        }
+        else if(data === "INVALID_PASSWORD") {
+            alert("Invalid password");
+        }
+
+    } catch(error) {
+        console.error(error);
+        alert("Server error");
+    }
+};
     return (
         <div className="login-page">
 
@@ -88,7 +114,7 @@ function Admin() {
                     
 
                     {/* LOGIN BUTTON */}
-                    <button type="submit" className="action-btn" onClick={() => navigate("/admin/dashboard")}>
+                    <button type="submit" className="action-btn">
                         Login
                     </button>
 
