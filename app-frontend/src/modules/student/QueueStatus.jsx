@@ -1,34 +1,28 @@
-import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-import "../../assets/styles.css";
+import React, { useState } from 'react';
 import { useQueue } from "../../context/QueueContext";
 import QueueLeft from "./ui/QueueLeft";
 import QueueRight from "./ui/QueueRight";
 import Navbar from "../../components/Navbar";
 
 function QueueStatus({ queueData }) {
- // const navigate = useNavigate();
 
   const {
     nextInLine,
     waitingCount,
     averageWaitTime,
     counters,
-    cancelQueue
+    cancelQueue,
+    latestTicket
   } = useQueue();
 
-  const [localTicket, setLocalTicket] = useState(
-    queueData?.priorityNumber || null
-  );
+  const localTicket = latestTicket?.priorityNumber || null;
 
   const currentServing =
-  counters
-    .find(counter => counter.length > 0)?.[0] || null;
+    counters.find(counter => counter.length > 0)?.[0] || null;
 
   const handleCancel = () => {
-    cancelQueue(localTicket);
-    setLocalTicket(null);
-  };
+  cancelQueue(localTicket);
+};
 
   return (
     <div className="dashboard-page">
@@ -47,7 +41,7 @@ function QueueStatus({ queueData }) {
           />
 
           <QueueRight
-            currentServing={currentServing?.id}
+            currentServing={currentServing}
             counters={counters}
           />
 

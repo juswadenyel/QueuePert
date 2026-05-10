@@ -13,7 +13,7 @@ const saveToHistory = (item) => {
   const updated = [
     ...existing,
     {
-      id: item.id,
+      priorityNumber: item.priorityNumber,
       name: item.name,
       transaction: item.transaction,
       date: new Date().toLocaleString()
@@ -48,7 +48,7 @@ export const QueueProvider = ({ children }) => {
       const base = reset ? 1 : prev;
 
       const newItem = {
-        id: generateQueueId(base),
+        priorityNumber: generateQueueId(base),
         studentId: studentData.studentId,
         name: studentData.name,
         year: studentData.year,
@@ -120,31 +120,37 @@ export const QueueProvider = ({ children }) => {
   };
 
   /* ---------------- CANCEL SPECIFIC ITEM ---------------- */
-  const cancelQueue = (id) => {
-    setQueue((prev) => prev.filter((item) => item.id !== id));
+  const cancelQueue = (priorityNumber) => {
+    setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
 
     setCounters((prev) =>
       prev.map((counter) =>
-        counter.filter((item) => item.id !== id)
+        counter.filter((item) => item.priorityNumber !== priorityNumber)
       )
     );
   };
 
-  function updateStudent(counterIndex, studentId, updatedData) {
+  function updateStudent(counterIndex, priorityNumber, updatedData) {
   setCounters(prevCounters => {
     const newCounters = [...prevCounters];
-      newCounters[counterIndex] = newCounters[counterIndex].map(student => 
-        student.id === studentId ? { ...student, ...updatedData } : student
+
+    newCounters[counterIndex] =
+      newCounters[counterIndex].map(student =>
+        student.priorityNumber === priorityNumber
+          ? { ...student, ...updatedData }
+          : student
       );
+
     return newCounters;
-    });
-  };
+  });
+}
   /* ---------------- VALUES ---------------- */
   const value = {
     queueList: queue,
+    latestTicket: queue[queue.length - 1] || null,
     counters,
     waitingCount: queue.length,
-    nextInLine: queue[0]?.id || "---",
+    nextInLine: queue[0]?.priorityNumber || "---",
 
     averageWaitTime:
       servedTimes.length > 0
