@@ -16,6 +16,8 @@ public class AdminEntity {
     private String lastName;
     private char middleInitial;
 
+    public AdminEntity() {
+    }
 
     public AdminEntity(int adminId, String universityEmail, String password, String firstName, String lastName,
             char middleInitial) {

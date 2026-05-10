@@ -1,5 +1,6 @@
 package com.queuepert.backend.entity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -8,9 +9,10 @@ import jakarta.persistence.Table;
 @Table(name = "tblqueueticket")
 public class QueueTicketEntity {
     @Id
+    @GeneratedValue
     private int queueId;
-    private int studentId;
-    private int adminId;
+    private String studentId;
+    private String adminId;
     private String priorityNumber;
     private String transacitonType;
     private String amount;
@@ -18,6 +20,9 @@ public class QueueTicketEntity {
     private String counterNumber;
     private String timeCreated;
     private String timeServed;
+
+    public QueueTicketEntity() {
+    }
 
 
     public QueueTicketEntity(int queueId, int studentId, int adminId, String priorityNumber, String transacitonType,

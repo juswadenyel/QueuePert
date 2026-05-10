@@ -8,7 +8,7 @@ import com.queuepert.backend.repository.StudentRepository;
 
 @Service
 public class StudentService {
-    
+
     StudentRepository studentRepository;
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
@@ -18,8 +18,24 @@ public class StudentService {
         return studentRepository.save(student);
     }
 
-    public StudentEntity getStudentById(Integer id) {
+    public StudentEntity getStudentById(String id) {
         return studentRepository.findById(id).orElse(null);
     }
     
+    // LOGIN METHOD
+    public String loginStudent(String email, String password) {
+
+    StudentEntity student = studentRepository.findByUniversityEmail(email);
+
+    if (student == null) {
+        return "EMAIL_NOT_FOUND";
+    }
+
+    if (!student.getPassword().equals(password)) {
+        return "INVALID_PASSWORD";
+    }
+
+    return "LOGIN_SUCCESS";
 }
+}
+
