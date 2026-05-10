@@ -14,7 +14,7 @@ public class QueueTicketEntity {
     private String studentId;
     private String adminId;
     private String priorityNumber;
-    private String transacitonType;
+    private String transactionType;
     private String amount;
     private String status;
     private String counterNumber;
@@ -24,14 +24,13 @@ public class QueueTicketEntity {
     public QueueTicketEntity() {
     }
 
-
-    public QueueTicketEntity(int queueId, int studentId, int adminId, String priorityNumber, String transacitonType,
+    public QueueTicketEntity(int queueId, String studentId, String adminId, String priorityNumber, String transactionType,
             String amount, String status, String counterNumber, String timeCreated, String timeServed) {
         this.queueId = queueId;
         this.studentId = studentId;
         this.adminId = adminId;
         this.priorityNumber = priorityNumber;
-        this.transacitonType = transacitonType;
+        this.transactionType = transactionType;
         this.amount = amount;
         this.status = status;
         this.counterNumber = counterNumber;
@@ -50,13 +49,13 @@ public class QueueTicketEntity {
     }
 
 
-    public int getStudentId() {
+    public String getStudentId() {
         return studentId;
     }
 
 
 
-    public int getAdminId() {
+    public String getAdminId() {
         return adminId;
     }
 
@@ -72,13 +71,13 @@ public class QueueTicketEntity {
     }
 
 
-    public String getTransacitonType() {
-        return transacitonType;
+    public String getTransactionType() {
+        return transactionType;
     }
 
 
-    public void setTransacitonType(String transacitonType) {
-        this.transacitonType = transacitonType;
+    public void setTransactionType(String transactionType) {
+        this.transactionType = transactionType;
     }
 
 
