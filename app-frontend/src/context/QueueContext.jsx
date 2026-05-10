@@ -1,15 +1,12 @@
 import React, { createContext, useState, useContext } from "react";
 
 const QueueContext = createContext();
-
 const STORAGE_KEY = "transactions";
 
 /* ---------------- HISTORY ---------------- */
 const saveToHistory = (item) => {
   if (!item) return;
-
   const existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-
   const updated = [
     ...existing,
     {
@@ -19,20 +16,18 @@ const saveToHistory = (item) => {
       date: new Date().toLocaleString()
     }
   ];
-
   localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
 };
 
-/* ---------------- CONTEXT ---------------- */
+/* ---------------- CONTEXT PROVIDER ---------------- */
 export const QueueProvider = ({ children }) => {
   const [queue, setQueue] = useState([]);
   const [counters, setCounters] = useState(Array(8).fill(null).map(() => []));
   const [servedTimes, setServedTimes] = useState([]);
   const [currentNumber, setCurrentNumber] = useState(1);
+  const [noShowCount, setNoShowCount] = useState(0); // Added for stats
 
-  /* ---------------- RESET LOGIC ---------------- */
-  const isSystemEmpty = () =>
-    queue.length === 0 && counters.every((c) => c.length === 0);
+  const isSystemEmpty = () => queue.length === 0 && counters.every((c) => c.length === 0);
 
   const generateQueueId = (num) => {
     const letterIndex = Math.floor((num - 1) / 999);
@@ -41,12 +36,10 @@ export const QueueProvider = ({ children }) => {
     return `${letter}${String(number).padStart(3, "0")}`;
   };
 
-  /* ---------------- ADD QUEUE ---------------- */
   const addQueue = (studentData) => {
     setCurrentNumber((prev) => {
       const reset = isSystemEmpty();
       const base = reset ? 1 : prev;
-
       const newItem = {
         id: generateQueueId(base),
         studentId: studentData.studentId,
@@ -57,117 +50,86 @@ export const QueueProvider = ({ children }) => {
         timeCreated: Date.now(),
         status: "waiting"
       };
-
       setQueue((q) => [...q, newItem]);
-
       return reset ? 2 : prev + 1;
     });
   };
 
-  /* ---------------- ADD TO COUNTER ---------------- */
- const addToCounter = (counterIndex = 0) => {
-    // 1. Check the limit FIRST
+  const addToCounter = (counterIndex = 0) => {
     if (counters[counterIndex].length >= 5) {
       alert("Counter Full!");
-      return; // CRITICAL: This stops the function here so no one is added
+      return;
     }
-
     setQueue((prevQueue) => {
       if (prevQueue.length === 0) return prevQueue;
-
       const nextItem = prevQueue[0];
       const remainingQueue = prevQueue.slice(1);
-
       setServedTimes((prev) => [...prev, Date.now() - nextItem.timeCreated]);
-
       setCounters((prevCounters) => {
         const newCounters = [...prevCounters];
         newCounters[counterIndex] = [...newCounters[counterIndex], nextItem];
         return newCounters;
       });
-
       return remainingQueue;
     });
   };
 
-  /* ---------------- NEXT QUEUE ---------------- */
   const nextQueue = (counterIndex = 0) => {
     setCounters((prev) => {
       const updated = [...prev];
       const current = [...updated[counterIndex]];
-
       if (current.length === 0) return prev;
-
       const servedItem = current.shift();
       updated[counterIndex] = current;
-
       if (servedItem) {
         saveToHistory(servedItem);
-
-        setServedTimes((prevTimes) => [
-          ...prevTimes,
-          Date.now() - servedItem.timeCreated
-        ]);
       }
-
       return updated;
     });
   };
 
-  /* ---------------- DELETE LAST QUEUE ---------------- */
-  const deleteQueue = () => {
-    setQueue((prev) => prev.slice(0, -1));
+  const markNoShow = (counterIndex = 0) => {
+    setCounters((prev) => {
+      const updated = [...prev];
+      const current = [...updated[counterIndex]];
+      if (current.length === 0) return prev;
+      const skippedItem = current.shift();
+      updated[counterIndex] = current;
+      if (skippedItem) {
+        saveToHistory({ ...skippedItem, transaction: "No Show" });
+      }
+      return updated;
+    });
+    setNoShowCount((prev) => prev + 1);
   };
 
-  /* ---------------- CANCEL SPECIFIC ITEM ---------------- */
-  const cancelQueue = (id) => {
-    setQueue((prev) => prev.filter((item) => item.id !== id));
-
-    setCounters((prev) =>
-      prev.map((counter) =>
-        counter.filter((item) => item.id !== id)
-      )
-    );
-  };
-
-  function updateStudent(counterIndex, studentId, updatedData) {
-  setCounters(prevCounters => {
-    const newCounters = [...prevCounters];
-      newCounters[counterIndex] = newCounters[counterIndex].map(student => 
+  const updateStudent = (counterIndex, studentId, updatedData) => {
+    setCounters((prevCounters) => {
+      const newCounters = [...prevCounters];
+      newCounters[counterIndex] = newCounters[counterIndex].map((student) =>
         student.id === studentId ? { ...student, ...updatedData } : student
       );
-    return newCounters;
+      return newCounters;
     });
   };
-  /* ---------------- VALUES ---------------- */
+
   const value = {
     queueList: queue,
     counters,
     waitingCount: queue.length,
     nextInLine: queue[0]?.id || "---",
-
-    averageWaitTime:
-      servedTimes.length > 0
-        ? Math.round(
-            servedTimes.reduce((a, b) => a + b, 0) /
-              servedTimes.length /
-              60000
-          )
+    noShowCount,
+    averageWaitTime: servedTimes.length > 0
+        ? Math.round(servedTimes.reduce((a, b) => a + b, 0) / servedTimes.length / 60000)
         : 0,
-
     addQueue,
     addToCounter,
     nextQueue,
-    deleteQueue,
-    cancelQueue,
+    markNoShow,
     updateStudent
-
   };
-  return (
-    <QueueContext.Provider value={value} >
-      {children}
-    </QueueContext.Provider>
-  );
+
+  return <QueueContext.Provider value={value}>{children}</QueueContext.Provider>;
 };
 
 export const useQueue = () => useContext(QueueContext);
