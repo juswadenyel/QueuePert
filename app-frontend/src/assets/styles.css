@@ -607,6 +607,3 @@ select:focus { outline: none; border-color: #7A1E2C; }
 
 .save-btn { background: #7A1E2C; color: white; }
 .cancel-btn { background: #555; color: white; }
-
-.save-btn:hover { background: #5c1521; }
-.cancel-btn:hover { background: #333; }

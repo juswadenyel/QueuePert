@@ -32,8 +32,9 @@ const Dashboard = () => {
               onAdd={() => addQueue({ name: "Walk-in", transaction: "General" })}
               onAddToCounter={() => addToCounter(target)}
               onNext={() => nextQueue(target)}
-              onDelete={() => markNoShow(target)}
+              onNoShow={() => markNoShow(target)}
             />
+
             <StatBox label="NEXT IN LINE" value={nextInLine} />
             <StatBox label="waiting" value={waitingCount} />
             <StatBox label="avg. wait" value={`${averageWaitTime} min`} />
