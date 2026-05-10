@@ -7,7 +7,7 @@ const UnqueuedGrid = ({ queueList }) => (
       {queueList && queueList.length > 0 
         ? queueList.map((item, i) => (
             <div key={i} className="grid-item" style={{ fontSize: '22px', fontWeight: 'bold' }}>
-              {item.id}
+              {item.priorityNumber}
             </div>
           ))
         : Array(21).fill("").map((_, i) => (

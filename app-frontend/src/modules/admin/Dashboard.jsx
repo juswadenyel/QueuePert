@@ -60,7 +60,7 @@ const Dashboard = () => {
                 <div className="panel" style={{ padding: '15px' }}>
                   <h4 style={{ fontSize: '18px', marginBottom: '15px' }}>YOUR QUEUE (Counter {target + 1}):</h4>
                     <p style={{ fontWeight: 'bold', fontSize: '25px', color: '#000' }}>
-                      {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.id).join(", ") : "--"}
+                      {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.priorityNumber).join(", ") : "--"}
                     </p>
                   </div>
 

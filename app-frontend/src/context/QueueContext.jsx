@@ -104,6 +104,21 @@ export const QueueProvider = ({ children }) => {
     );
   };
 
+  const markNoShow = (counterIndex = 0) => {
+    setCounters((prev) => {
+      const updated = [...prev];
+      const current = [...updated[counterIndex]];
+      if (current.length === 0) return prev;
+      const skippedItem = current.shift();
+      updated[counterIndex] = current;
+      if (skippedItem) {
+        saveToHistory({ ...skippedItem, transaction: "No Show" });
+      }
+      return updated;
+    });
+    setNoShowCount((prev) => prev + 1);
+  };
+
   function updateStudent(counterIndex, priorityNumber, updatedData) {
   setCounters(prevCounters => {
     const newCounters = [...prevCounters];
@@ -137,6 +152,7 @@ export const QueueProvider = ({ children }) => {
     addQueue,
     addToCounter,
     nextQueue,
+    cancelQueue,
     markNoShow,
     updateStudent
   };
