@@ -7,5 +7,5 @@ import com.queuepert.backend.entity.AdminEntity;
 
 @Repository
 public interface AdminRepository extends JpaRepository<AdminEntity, Integer> {
-
+    AdminEntity findByUniversityEmail(String universityEmail);
 }
