@@ -1,6 +1,12 @@
 package com.queuepert.backend.entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 
@@ -16,6 +22,9 @@ public class StudentEntity {
     private char middleInitial;
     private String course;
     private int yearLevel;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<QueueTicketEntity> tickets = new ArrayList<>();
 
     public StudentEntity() {
     }
@@ -79,6 +88,14 @@ public class StudentEntity {
 
     public int getYearLevel() {
         return yearLevel;
+    }
+
+    public List<QueueTicketEntity> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<QueueTicketEntity> tickets) {
+        this.tickets = tickets;
     }
 
 
