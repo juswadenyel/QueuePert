@@ -10,7 +10,7 @@ const saveToHistory = (item) => {
   const updated = [
     ...existing,
     {
-      id: item.id,
+      priorityNumber: item.priorityNumber,
       name: item.name,
       transaction: item.transaction,
       date: new Date().toLocaleString()
@@ -41,7 +41,7 @@ export const QueueProvider = ({ children }) => {
       const reset = isSystemEmpty();
       const base = reset ? 1 : prev;
       const newItem = {
-        id: generateQueueId(base),
+        priorityNumber: generateQueueId(base),
         studentId: studentData.studentId,
         name: studentData.name,
         year: studentData.year,
@@ -88,39 +88,51 @@ export const QueueProvider = ({ children }) => {
     });
   };
 
-  const markNoShow = (counterIndex = 0) => {
-    setCounters((prev) => {
-      const updated = [...prev];
-      const current = [...updated[counterIndex]];
-      if (current.length === 0) return prev;
-      const skippedItem = current.shift();
-      updated[counterIndex] = current;
-      if (skippedItem) {
-        saveToHistory({ ...skippedItem, transaction: "No Show" });
-      }
-      return updated;
-    });
-    setNoShowCount((prev) => prev + 1);
+  /* ---------------- DELETE LAST QUEUE ---------------- */
+  const deleteQueue = () => {
+    setQueue((prev) => prev.slice(0, -1));
   };
 
-  const updateStudent = (counterIndex, studentId, updatedData) => {
-    setCounters((prevCounters) => {
-      const newCounters = [...prevCounters];
-      newCounters[counterIndex] = newCounters[counterIndex].map((student) =>
-        student.id === studentId ? { ...student, ...updatedData } : student
+  /* ---------------- CANCEL SPECIFIC ITEM ---------------- */
+  const cancelQueue = (priorityNumber) => {
+    setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
+
+    setCounters((prev) =>
+      prev.map((counter) =>
+        counter.filter((item) => item.priorityNumber !== priorityNumber)
+      )
+    );
+  };
+
+  function updateStudent(counterIndex, priorityNumber, updatedData) {
+  setCounters(prevCounters => {
+    const newCounters = [...prevCounters];
+
+    newCounters[counterIndex] =
+      newCounters[counterIndex].map(student =>
+        student.priorityNumber === priorityNumber
+          ? { ...student, ...updatedData }
+          : student
       );
-      return newCounters;
-    });
-  };
 
+    return newCounters;
+  });
+}
+  /* ---------------- VALUES ---------------- */
   const value = {
     queueList: queue,
+    latestTicket: queue[queue.length - 1] || null,
     counters,
     waitingCount: queue.length,
-    nextInLine: queue[0]?.id || "---",
-    noShowCount,
-    averageWaitTime: servedTimes.length > 0
-        ? Math.round(servedTimes.reduce((a, b) => a + b, 0) / servedTimes.length / 60000)
+    nextInLine: queue[0]?.priorityNumber || "---",
+
+    averageWaitTime:
+      servedTimes.length > 0
+        ? Math.round(
+            servedTimes.reduce((a, b) => a + b, 0) /
+              servedTimes.length /
+              60000
+          )
         : 0,
     addQueue,
     addToCounter,

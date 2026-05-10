@@ -4,16 +4,14 @@ import { useQueue } from "../../context/QueueContext";
 import PriorityFormCard from "./ui/PriorityFormCard";
 import Navbar from "../../components/Navbar";
 
-function PriorityForm({ setQueueData }) {
+function PriorityForm() {
   const navigate = useNavigate();
   const { addQueue } = useQueue();
 
   const [form, setForm] = useState({
-    id: "",
-    name: "",
-    year: "",
     semester: "",
-    transaction: ""
+    transactionType: "",
+    amount: ""
   });
 
   const handleChange = (e) => {
@@ -21,35 +19,30 @@ function PriorityForm({ setQueueData }) {
   };
 
   const handleSubmit = () => {
-  if (!form.id || !form.name) {
-    alert("Please fill all required fields");
-    return;
-  }
+    if (!form.semester || !form.transactionType || !form.amount) {
+      alert("Please fill all required fields");
+      return;
+    }
 
-  const newTransaction = addQueue({
-    studentId: form.id,   // ✅ IMPORTANT FIX
-    name: form.name,      // ✅ MUST match QueueContext
-    year: form.year,
-    semester: form.semester,
-    transaction: form.transaction
-  });
+    const newTransaction = addQueue({
+      semester: form.semester,
+      transactionType: form.transactionType,
+      amount: form.amount
+    });
 
-  console.log("SENT TO QUEUE:", newTransaction);
+    console.log("SENT TO QUEUE:", newTransaction);
 
-  navigate("/student/queue");
-};
-
+    navigate("/student/queue");
+  };
 
   return (
     <div className="login-page">
-
       <Navbar role="form" />
 
       <PriorityFormCard
         onChange={handleChange}
         onSubmit={handleSubmit}
       />
-
     </div>
   );
 }

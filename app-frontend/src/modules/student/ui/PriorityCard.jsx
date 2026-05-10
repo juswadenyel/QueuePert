@@ -6,6 +6,10 @@ const PriorityCard = ({ localTicket, onCancel }) => (
       {localTicket || "--"}
     </div>
 
+    <p className="priority-status">
+      {localTicket?.status || ""}
+    </p>
+
     <button
       className="cancel-queue-btn"
       onClick={() => {
