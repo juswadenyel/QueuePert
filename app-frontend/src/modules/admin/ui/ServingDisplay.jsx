@@ -16,7 +16,7 @@ const ServingDisplay = ({ target, counters }) => {
               textAlign: 'center'
             }}
           >
-            Counter {i + 1}: {arr.length > 0 ? arr.map(s => s.id).join(", ") : "Empty"}
+            Counter {i + 1}: {arr.length > 0 ? arr.map(s => s.priorityNumber).join(", ") : "Empty"}
           </div>
         ))}
       </div>

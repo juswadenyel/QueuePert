@@ -81,7 +81,7 @@ export const QueueProvider = ({ children }) => {
     counters,
     queueList: queue.map(q => q.id),
     waitingCount: queue.length,
-    nextInLine: queue[0]?.id || "---",
+    nextInLine: queue[0]?.priorityNumber || "---",
     averageWaitTime: servedTimes.length > 0 
       ? Math.round((servedTimes.reduce((a, b) => a + b, 0) / servedTimes.length) / 60000) 
       : 0,

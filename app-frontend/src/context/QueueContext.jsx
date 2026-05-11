@@ -36,24 +36,34 @@ export const QueueProvider = ({ children }) => {
     return `${letter}${String(number).padStart(3, "0")}`;
   };
 
-  const addQueue = (studentData) => {
-    setCurrentNumber((prev) => {
-      const reset = isSystemEmpty();
-      const base = reset ? 1 : prev;
-      const newItem = {
-        priorityNumber: generateQueueId(base),
-        studentId: studentData.studentId,
-        name: studentData.name,
-        year: studentData.year,
-        semester: studentData.semester,
-        transaction: studentData.transaction,
-        timeCreated: Date.now(),
-        status: "waiting"
-      };
-      setQueue((q) => [...q, newItem]);
-      return reset ? 2 : prev + 1;
-    });
-  };
+  const addQueue = (ticketData) => {
+  setCurrentNumber((prev) => {
+    const reset = isSystemEmpty();
+    const base = reset ? 1 : prev;
+
+    const newItem = {
+      priorityNumber: generateQueueId(base),
+
+      // student info
+      studentId: ticketData.studentId,
+      fullName: ticketData.fullName,
+      yearLevel: ticketData.yearLevel,
+      course: ticketData.course,
+
+      // queue ticket info
+      semester: ticketData.semester,
+      transactionType: ticketData.transactionType,
+      amount: ticketData.amount,
+
+      timeCreated: Date.now(),
+      status: "waiting"
+    };
+
+    setQueue((q) => [...q, newItem]);
+
+    return reset ? 2 : prev + 1;
+  });
+};
 
   const addToCounter = (counterIndex = 0) => {
     if (counters[counterIndex].length >= 5) {

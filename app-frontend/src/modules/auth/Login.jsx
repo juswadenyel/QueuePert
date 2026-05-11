@@ -17,36 +17,38 @@ function Login() {
     try {
 
         const response = await fetch(
-            "http://localhost:8080/student/login",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    universityEmail: email,
-                    password: password
-                })
-            }
+    "http://localhost:8080/student/login",
+    {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            universityEmail: email,
+            password: password
+        })
+    }
+);
+
+        const data = await response.json(); // ✅ correct
+
+        if (!response.ok) {
+            alert("Login failed");
+            return;
+        }
+
+        localStorage.setItem(
+            "student",
+            JSON.stringify(data)
         );
 
-        const data = await response.text();
+        navigate("/student/dashboard");
 
-        if(data === "LOGIN_SUCCESS") {
-            navigate("/student/dashboard");
+        } catch (error) {
+            console.error(error);
+            alert("Server error");
         }
-        else if(data === "EMAIL_NOT_FOUND") {
-            alert("Email not found");
-        }
-        else if(data === "INVALID_PASSWORD") {
-            alert("Invalid password");
-        }
-
-    } catch(error) {
-        console.error(error);
-        alert("Server error");
-    }
-};
+    };
 
     return (
         <div className="login-page">
