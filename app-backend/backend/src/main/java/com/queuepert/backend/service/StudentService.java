@@ -23,19 +23,19 @@ public class StudentService {
     }
     
     // LOGIN METHOD
-    public String loginStudent(String email, String password) {
+    public StudentEntity loginStudent(String email, String password) {
 
     StudentEntity student = studentRepository.findByUniversityEmail(email);
 
-    if (student == null) {
-        return "EMAIL_NOT_FOUND";
-    }
+        if (student == null) {
+            return null;
+        }
 
-    if (!student.getPassword().equals(password)) {
-        return "INVALID_PASSWORD";
-    }
+        if (!student.getPassword().equals(password)) {
+            return null;
+        }
 
-    return "LOGIN_SUCCESS";
-}
+        return student;
+    }
 }
 

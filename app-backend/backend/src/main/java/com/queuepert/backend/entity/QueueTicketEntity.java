@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 @Entity
 @Table(name = "tblqueueticket")
@@ -17,8 +19,13 @@ public class QueueTicketEntity {
     @GeneratedValue
     private int queueId;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
+    @JsonIgnoreProperties({
+        "hibernateLazyInitializer",
+        "handler"
+    })
     private StudentEntity student;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,7 +45,7 @@ public class QueueTicketEntity {
     }
 
     public QueueTicketEntity(int queueId, StudentEntity student, AdminEntity admin, String priorityNumber, String transactionType,
-            Double amount, String semester, String status, String counterNumber, LocalDateTime timeCreated, String timeServed) {
+            Double amount, String semester, String status, String counterNumber, LocalDateTime timeCreated, LocalDateTime timeServed) {
         this.queueId = queueId;
         this.student = student;
         this.admin = admin;
@@ -133,11 +140,11 @@ public class QueueTicketEntity {
         this.timeCreated = timeCreated;
     }
 
-    public String getTimeServed() {
+    public LocalDateTime getTimeServed() {
         return timeServed;
     }
 
-    public void setTimeServed(String timeServed) {
+    public void setTimeServed(LocalDateTime timeServed) {
         this.timeServed = timeServed;
     }
 
@@ -147,5 +154,25 @@ public class QueueTicketEntity {
 
     public void setSemester(String semester) {
         this.semester = semester;
+    }
+
+    public String getStudentFullName() {
+        if (student == null) return null;
+
+        return student.getLastName() + ", " +
+            student.getFirstName() + " " +
+            student.getMiddleInitial() + ".";
+    }
+
+    public String getCourse() {
+        return student != null ? student.getCourse() : null;
+    }
+
+    public Integer getYearLevel() {
+        return student != null ? student.getYearLevel() : null;
+    }
+
+    public String getUniversityEmail() {
+        return student != null ? student.getUniversityEmail() : null;
     }
 }
