@@ -21,7 +21,7 @@ public class StudentController {
     }
 
     @PostMapping("/login")
-    public String loginStudent(@RequestBody StudentEntity student) {
+    public StudentEntity loginStudent(@RequestBody StudentEntity student) {
 
         return studentService.loginStudent(
             student.getUniversityEmail(),
