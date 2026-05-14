@@ -1,55 +1,57 @@
-// QueueRequest.jsx
-// QueuePert – CIT-U Queue Management System
-// Student-facing page: select a service and get a queue ticket
-
 import React, { useState } from 'react';
-import { requestTicket, SERVICE_LABELS } from './queueService';
-import '../assets/styles.css';
+import { SERVICE_LABELS } from './queueService';
+import '../../assets/styles.css';
 
-// ─── Service options ──────────────────────────────────────────────────────────
 const SERVICES = [
-  { key:'registrar', icon:'📋', label:'Registrar',  sub:'Enrollment / OTR', queue: 12 },
-  { key:'cashier',   icon:'💳', label:'Cashier',    sub:'Tuition & Fees',   queue: 8  },
-  { key:'guidance',  icon:'💬', label:'Guidance',   sub:'Counseling',       queue: 4  },
-  { key:'osas',      icon:'🎓', label:'OSAS',       sub:'Scholarships',     queue: 6  },
-  { key:'it',        icon:'💻', label:'IT Support', sub:'Tech Assistance',  queue: 0  },
+  { key: 'registrar', icon: '📋', label: 'Registrar',   sub: 'Enrollment / OTR', queue: 12 },
+  { key: 'cashier',   icon: '💳', label: 'Cashier',     sub: 'Tuition & Fees',   queue: 8  },
+  { key: 'guidance',  icon: '💬', label: 'Guidance',    sub: 'Counseling',       queue: 4  },
+  { key: 'osas',      icon: '🎓', label: 'OSAS',        sub: 'Scholarships',     queue: 6  },
+  { key: 'it',        icon: '💻', label: 'IT Support',  sub: 'Tech Assistance',  queue: 0  },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
 export default function QueueRequest() {
   const [selectedService, setSelectedService] = useState(null);
-  const [studentId, setStudentId] = useState('');
-  const [name, setName]           = useState('');
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState(null);
-  const [ticket, setTicket]       = useState(null);
+  const [studentId, setStudentId]             = useState('');
+  const [semester, setSemester]               = useState('');
+  const [amount, setAmount]                   = useState('');
+  const [loading, setLoading]                 = useState(false);
+  const [error, setError]                     = useState(null);
+  const [ticket, setTicket]                   = useState(null);
 
   async function handleSubmit() {
-    if (!selectedService) { setError('Please select a service counter.'); return; }
-    if (!studentId.trim()) { setError('Please enter your Student ID.'); return; }
-    if (!name.trim())      { setError('Please enter your name.'); return; }
+    if (!selectedService)    { setError('Please select a service counter.'); return; }
+    if (!studentId.trim())   { setError('Please enter your Student ID.'); return; }
+    if (!semester.trim())    { setError('Please enter the semester.'); return; }
+    if (!amount)             { setError('Please enter the amount.'); return; }
 
     setError(null);
     setLoading(true);
+
     try {
-      const result = await requestTicket(selectedService, {
-        studentId: studentId.trim(),
-        name: name.trim(),
+      const response = await fetch('http://localhost:8080/queue/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student: { studentId: studentId.trim() },
+          transactionType: selectedService,
+          semester: semester.trim(),
+          amount: parseFloat(amount),
+        })
       });
-      setTicket(result);
-    } catch {
-      // Demo fallback
-      const svc    = SERVICES.find(s => s.key === selectedService);
-      const prefix = { registrar:'A', cashier:'B', guidance:'C', osas:'D', it:'E' }[selectedService];
-      setTicket({
-        ticketNumber: `${prefix}-${String(Math.floor(Math.random() * 50) + 50).padStart(3, '0')}`,
-        position:      svc.queue + 1,
-        estimatedWait: (svc.queue + 1) * 4,
-        counterLabel:  `Counter · ${svc.label}`,
-        studentId:     studentId.trim(),
-        name:          name.trim(),
-        issuedAt:      new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }),
-      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        setError(err.error || 'Failed to get ticket. Try again.');
+        return;
+      }
+
+      const data = await response.json();
+      setTicket(data);
+
+    } catch (err) {
+      console.error(err);
+      setError('Cannot connect to server. Make sure the backend is running.');
     } finally {
       setLoading(false);
     }
@@ -59,14 +61,15 @@ export default function QueueRequest() {
     setTicket(null);
     setSelectedService(null);
     setStudentId('');
-    setName('');
+    setSemester('');
+    setAmount('');
     setError(null);
   }
 
   return (
     <div className="login-page">
 
-      {/* ── Navbar ── */}
+      {/* Navbar */}
       <div className="navbar">
         <div className="logo">QueuePert</div>
         <div className="nav-buttons">
@@ -80,7 +83,7 @@ export default function QueueRequest() {
 
         {!ticket ? (
 
-          /* ── Request Form ── */
+          /* Request Form */
           <div className="containerLogin">
             <h1>Get Your Number</h1>
             <p className="description">
@@ -88,29 +91,43 @@ export default function QueueRequest() {
             </p>
 
             {/* Student ID */}
-            <label className="input-label">Student ID</label>
+            <label className="input-label" htmlFor="studentId">Student ID</label>
             <input
+              id="studentId"
+              name="studentId"
               type="text"
               placeholder="e.g. 21-2345-678"
               value={studentId}
               onChange={e => setStudentId(e.target.value)}
             />
 
-            {/* Full Name */}
-            <label className="input-label">Full Name</label>
+            {/* Semester */}
+            <label className="input-label" htmlFor="semester">Semester</label>
             <input
+              id="semester"
+              name="semester"
               type="text"
-              placeholder="Last name, First name"
-              value={name}
-              onChange={e => setName(e.target.value)}
+              placeholder="e.g. 1st Semester 2025-2026"
+              value={semester}
+              onChange={e => setSemester(e.target.value)}
             />
 
-            {/* Divider */}
+            {/* Amount */}
+            <label className="input-label" htmlFor="amount">Amount (₱)</label>
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              placeholder="e.g. 500"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+            />
+
+            {/* Service Selection */}
             <p className="description" style={{ marginTop: '10px', marginBottom: '6px', fontSize: '12px' }}>
               — Select a service counter —
             </p>
 
-            {/* Service grid */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
               {SERVICES.map(svc => {
                 const isClosed   = svc.key === 'it' && svc.queue === 0;
@@ -156,9 +173,9 @@ export default function QueueRequest() {
 
         ) : (
 
-          /* ── Ticket Confirmation ── */
+          /* Ticket Confirmation — shows real data from database */
           <div className="container" style={{ maxWidth: '380px' }}>
-            {/* Ticket header */}
+
             <div style={{
               background: '#C9A227', margin: '-35px -35px 20px -35px',
               padding: '20px', borderRadius: '15px 15px 0 0', textAlign: 'center',
@@ -171,20 +188,19 @@ export default function QueueRequest() {
               </div>
             </div>
 
-            {/* Service + big number */}
             <p className="description" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '4px' }}>
-              {SERVICE_LABELS[selectedService]}
+              {SERVICE_LABELS[ticket.transactionType] || ticket.transactionType}
             </p>
-            <div className="serving-number">{ticket.ticketNumber}</div>
 
-            {/* Detail rows */}
+            <div className="serving-number">{ticket.priorityNumber}</div>
+
             {[
-              { label: 'Name',             value: ticket.name },
               { label: 'Student ID',       value: ticket.studentId },
-              { label: 'Counter',          value: ticket.counterLabel },
-              { label: 'Position',         value: `#${ticket.position}` },
-              { label: 'Estimated Wait',   value: `~${ticket.estimatedWait} min` },
-              { label: 'Issued At',        value: ticket.issuedAt },
+              { label: 'Transaction',      value: ticket.transactionType },
+              { label: 'Semester',         value: ticket.semester },
+              { label: 'Amount',           value: `₱${ticket.amount}` },
+              { label: 'Status',           value: ticket.status },
+              { label: 'Issued At',        value: new Date(ticket.timeCreated).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) },
             ].map(row => (
               <div
                 key={row.label}
@@ -203,7 +219,11 @@ export default function QueueRequest() {
               Please stay within the premises and listen for your number to be called.
             </p>
 
-            <button className="action-btn" onClick={handleReset} style={{ marginTop: '14px', background: 'transparent', color: '#7A1E2C', border: '2px solid #7A1E2C' }}>
+            <button
+              className="action-btn"
+              onClick={handleReset}
+              style={{ marginTop: '14px', background: 'transparent', color: '#7A1E2C', border: '2px solid #7A1E2C' }}
+            >
               ← Request Another Ticket
             </button>
           </div>

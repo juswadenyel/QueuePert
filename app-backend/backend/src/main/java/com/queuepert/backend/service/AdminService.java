@@ -1,5 +1,7 @@
 package com.queuepert.backend.service;
 
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import com.queuepert.backend.entity.AdminEntity;
@@ -17,23 +19,25 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public AdminEntity getAdminById(Integer id) {
+    public AdminEntity getAdminById(String id) {
         return adminRepository.findById(id).orElse(null);
     }
 
-    public String loginAdmin(String email, String password) {
+    public Map<String, Object> loginAdmin(String email, String password) {
+        AdminEntity admin = adminRepository.findByUniversityEmail(email);
 
-    AdminEntity admin = adminRepository.findByUniversityEmail(email);
+        if (admin == null) {
+            return Map.of("success", false, "message", "Email not found");
+        }
+        if (!admin.getPassword().equals(password)) {
+            return Map.of("success", false, "message", "Incorrect password");
+        }
 
-    if (admin == null) {
-        return "EMAIL_NOT_FOUND";
+        return Map.of(
+            "success", true,
+            "adminId", admin.getAdminId(),
+            "firstName", admin.getFirstName(),
+            "lastName", admin.getLastName()
+        );
     }
-
-    if (!admin.getPassword().equals(password)) {
-        return "INVALID_PASSWORD";
-    }
-
-    return "LOGIN_SUCCESS";
-}
-
 }

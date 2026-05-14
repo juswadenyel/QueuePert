@@ -2,34 +2,30 @@ package com.queuepert.backend.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 
 @Entity
 @Table(name = "tblqueueticket")
 public class QueueTicketEntity {
-    @Id
-    @GeneratedValue
-    private int queueId;
 
+    @Id
+    private int queueId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "student_id")
-    @JsonIgnoreProperties({
-        "hibernateLazyInitializer",
-        "handler"
-    })
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private StudentEntity student;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "admin_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "tickets"})
     private AdminEntity admin;
 
     private String priorityNumber;
@@ -41,138 +37,57 @@ public class QueueTicketEntity {
     private LocalDateTime timeCreated;
     private LocalDateTime timeServed;
 
-    public QueueTicketEntity() {
-    }
+    public QueueTicketEntity() {}
 
-    public QueueTicketEntity(int queueId, StudentEntity student, AdminEntity admin, String priorityNumber, String transactionType,
-            Double amount, String semester, String status, String counterNumber, LocalDateTime timeCreated, LocalDateTime timeServed) {
-        this.queueId = queueId;
-        this.student = student;
-        this.admin = admin;
-        this.priorityNumber = priorityNumber;
-        this.transactionType = transactionType;
-        this.amount = amount;
-        this.semester = semester;
-        this.status = status;
-        this.counterNumber = counterNumber;
-        this.timeCreated = timeCreated;
-        this.timeServed = timeServed;
-    }
+    public int getQueueId() { return queueId; }
+    public void setQueueId(int queueId) { this.queueId = queueId; }
 
-    public int getQueueId() {
-        return queueId;
-    }
+    public StudentEntity getStudent() { return student; }
+    public void setStudent(StudentEntity student) { this.student = student; }
 
-    public void setQueueId(int queueId) {
-        this.queueId = queueId;
-    }
+    public AdminEntity getAdmin() { return admin; }
+    public void setAdmin(AdminEntity admin) { this.admin = admin; }
 
-    public StudentEntity getStudent() {
-        return student;
-    }
-
-    public void setStudent(StudentEntity student) {
-        this.student = student;
-    }
-
-    public AdminEntity getAdmin() {
-        return admin;
-    }
-
-    public void setAdmin(AdminEntity admin) {
-        this.admin = admin;
-    }
-
-    // convenience getters for backward compatibility
     public String getStudentId() {
         return student != null ? student.getStudentId() : null;
     }
 
-    public Integer getAdminId() {
-        return admin != null ? admin.getAdminId() : null;
+    public String getAdminId() {
+        return admin != null ? String.valueOf(admin.getAdminId()) : null;
     }
 
-    public String getPriorityNumber() {
-        return priorityNumber;
-    }
+    public String getPriorityNumber() { return priorityNumber; }
+    public void setPriorityNumber(String priorityNumber) { this.priorityNumber = priorityNumber; }
 
-    public void setPriorityNumber(String priorityNumber) {
-        this.priorityNumber = priorityNumber;
-    }
+    public String getTransactionType() { return transactionType; }
+    public void setTransactionType(String transactionType) { this.transactionType = transactionType; }
 
-    public String getTransactionType() {
-        return transactionType;
-    }
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
 
-    public void setTransactionType(String transactionType) {
-        this.transactionType = transactionType;
-    }
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
 
-    public Double getAmount() {
-        return amount;
-    }
+    public String getCounterNumber() { return counterNumber; }
+    public void setCounterNumber(String counterNumber) { this.counterNumber = counterNumber; }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
-    }
+    public LocalDateTime getTimeCreated() { return timeCreated; }
+    public void setTimeCreated(LocalDateTime timeCreated) { this.timeCreated = timeCreated; }
 
-    public String getStatus() {
-        return status;
-    }
+    public LocalDateTime getTimeServed() { return timeServed; }
+    public void setTimeServed(LocalDateTime timeServed) { this.timeServed = timeServed; }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getCounterNumber() {
-        return counterNumber;
-    }
-
-    public void setCounterNumber(String counterNumber) {
-        this.counterNumber = counterNumber;
-    }
-
-    public LocalDateTime getTimeCreated() {
-        return timeCreated;
-    }
-
-    public void setTimeCreated(LocalDateTime timeCreated) {
-        this.timeCreated = timeCreated;
-    }
-
-    public LocalDateTime getTimeServed() {
-        return timeServed;
-    }
-
-    public void setTimeServed(LocalDateTime timeServed) {
-        this.timeServed = timeServed;
-    }
-
-    public String getSemester() {
-        return semester;
-    }
-
-    public void setSemester(String semester) {
-        this.semester = semester;
-    }
+    public String getSemester() { return semester; }
+    public void setSemester(String semester) { this.semester = semester; }
 
     public String getStudentFullName() {
         if (student == null) return null;
-
         return student.getLastName() + ", " +
             student.getFirstName() + " " +
             student.getMiddleInitial() + ".";
     }
 
-    public String getCourse() {
-        return student != null ? student.getCourse() : null;
-    }
-
-    public Integer getYearLevel() {
-        return student != null ? student.getYearLevel() : null;
-    }
-
-    public String getUniversityEmail() {
-        return student != null ? student.getUniversityEmail() : null;
-    }
+    public String getCourse() { return student != null ? student.getCourse() : null; }
+    public Integer getYearLevel() { return student != null ? student.getYearLevel() : null; }
+    public String getUniversityEmail() { return student != null ? student.getUniversityEmail() : null; }
 }

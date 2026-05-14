@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.queuepert.backend.entity.AdminEntity;
 
 @Repository
-public interface AdminRepository extends JpaRepository<AdminEntity, Integer> {
+public interface AdminRepository extends JpaRepository<AdminEntity, String> {
     AdminEntity findByUniversityEmail(String universityEmail);
 }

@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [target, setTarget] = useState(0);
   const { 
     counters, queueList, waitingCount, nextInLine, averageWaitTime, noShowCount,
-    addQueue, nextQueue, addToCounter, markNoShow 
+    nextQueue, addToCounter, markNoShow, fetchWaitingTickets
   } = useQueue();
 
   const activeStudentsAtCounter = counters?.[target] || [];
@@ -28,12 +28,12 @@ const Dashboard = () => {
           {/* COLUMN 1: SIDEBAR STATS */}
           <div className="left-column">
             <AdminPanel 
-              target={target} setTarget={setTarget} counters={counters}
-              onAdd={() => addQueue({ name: "Walk-in", transaction: "General" })}
-              onAddToCounter={() => addToCounter(target)}
-              onNext={() => nextQueue(target)}
-              onNoShow={() => markNoShow(target)}
-            />
+            target={target} setTarget={setTarget} counters={counters}
+            onAddToCounter={() => addToCounter(target)}
+            onNext={() => nextQueue(target)}
+            onNoShow={() => markNoShow(target)}
+            onRefresh={fetchWaitingTickets}
+/>
 
             <StatBox label="NEXT IN LINE" value={nextInLine} />
             <StatBox label="waiting" value={waitingCount} />
