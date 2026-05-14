@@ -14,7 +14,7 @@ import jakarta.persistence.Table;
 @Table(name = "tbladmin")
 public class AdminEntity {
     @Id
-    private int adminId;
+    private String adminId;
     private String universityEmail;
     private String password;
     private String firstName;
@@ -27,7 +27,7 @@ public class AdminEntity {
     public AdminEntity() {
     }
 
-    public AdminEntity(int adminId, String universityEmail, String password, String firstName, String lastName,
+    public AdminEntity(String adminId, String universityEmail, String password, String firstName, String lastName,
             char middleInitial) {
         this.adminId = adminId;
         this.universityEmail = universityEmail;
@@ -39,7 +39,7 @@ public class AdminEntity {
 
 
 
-    public int getAdminId() {
+    public String getAdminId() {
         return adminId;
     }
 

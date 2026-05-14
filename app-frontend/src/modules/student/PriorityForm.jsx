@@ -1,13 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQueue } from "../../context/QueueContext";
 import PriorityFormCard from "./ui/PriorityFormCard";
 import Navbar from "../../components/Navbar";
 
-
 function PriorityForm() {
   const navigate = useNavigate();
-  const { addQueue } = useQueue();
 
   const loggedInStudentRaw = localStorage.getItem("student");
   const loggedInStudent = loggedInStudentRaw
@@ -15,9 +12,9 @@ function PriorityForm() {
     : null;
 
   const [form, setForm] = useState({
-    semester: "",
+    semester:        "",
     transactionType: "",
-    amount: ""
+    amount:          ""
   });
 
   if (!loggedInStudent) {
@@ -30,35 +27,42 @@ function PriorityForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!form.semester || !form.transactionType || !form.amount) {
       alert("Please fill all required fields");
       return;
     }
 
-    const fullName =
-      `${loggedInStudent.firstName} ` +
-      `${loggedInStudent.middleInitial}. ` +
-      `${loggedInStudent.lastName}`;
+    try {
+      const response = await fetch("http://localhost:8080/queue/request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          student:         { studentId: loggedInStudent.studentId },
+          transactionType: form.transactionType,
+          semester:        form.semester,
+          amount:          parseFloat(form.amount),
+        })
+      });
 
-    addQueue({
-      studentId: loggedInStudent.studentId,
-      fullName,
-      yearLevel: loggedInStudent.yearLevel,
-      course: loggedInStudent.course,
+      if (!response.ok) {
+        const err = await response.json();
+        alert(err.error || "Failed to request ticket");
+        return;
+      }
 
-      semester: form.semester,
-      transactionType: form.transactionType,
-      amount: form.amount
-    });
+      // Ticket saved to database successfully
+      navigate("/student/queue");
 
-    navigate("/student/queue");
+    } catch (err) {
+      console.error(err);
+      alert("Cannot connect to server. Make sure the backend is running.");
+    }
   };
 
   return (
     <div className="login-page">
       <Navbar role="form" />
-
       <PriorityFormCard
         onChange={handleChange}
         onSubmit={handleSubmit}
