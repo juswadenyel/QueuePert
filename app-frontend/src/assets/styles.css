@@ -429,13 +429,17 @@ select:focus { outline: none; border-color: #7A1E2C; }
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
+
 }
 
 .history-table th {
     background: #7A1E2C;
     color: white;
     padding: 10px;
-    text-align: left;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .history-table td {
@@ -449,29 +453,25 @@ select:focus { outline: none; border-color: #7A1E2C; }
 /* --- NEW TRANSACTION INFO & WORKSPACE STYLES (APPENDED) --- */
 /* ======================================================== */
 
-.transaction-info {
-    flex: 1.8; /* Updated proportion for detail view */
+.panel {
     display: flex;
     flex-direction: column;
-    text-align: left !important;
-    overflow: hidden;
 }
 
-.transaction-list {
-    flex: 1;
+.table-container {
+    width: 100%;
     overflow-y: auto;
-    margin-top: 10px;
-    padding-right: 8px;
+    overflow-x: hidden;
 }
 
-/* Custom Scrollbar for center workspace area */
-.transaction-list::-webkit-scrollbar { 
-    width: 6px; 
-}
-.transaction-list::-webkit-scrollbar-thumb { 
+.table-container::-webkit-scrollbar { width: 8px; }
+.table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 10px; }
+.table-container::-webkit-scrollbar-thumb { 
     background: #7A1E2C; 
-    border-radius: 10px; 
+    border-radius: 10px;
+    border: 2px solid #C9A227; 
 }
+
 
 .info-details {
     background: rgba(0, 0, 0, 0.08);
@@ -485,7 +485,7 @@ select:focus { outline: none; border-color: #7A1E2C; }
 .info-details p {
     font-size: px;
     margin-bottom: 5px;
-    color: #000000; /* Consistent maroon text color */
+    color: #000000;
     font-weight: bold;
 }
 
@@ -502,7 +502,6 @@ select:focus { outline: none; border-color: #7A1E2C; }
     font-style: italic;
 }
 
-/* Side-by-side center workspace row */
 .workspace-row {
     display: flex;
     gap: 20px;
@@ -511,7 +510,6 @@ select:focus { outline: none; border-color: #7A1E2C; }
     overflow: hidden;
 }
 
-/* Consistent highlighting for active target counter */
 .active-target {
     background: rgba(122, 30, 44, 0.15) !important;
     color: #7A1E2C !important;
