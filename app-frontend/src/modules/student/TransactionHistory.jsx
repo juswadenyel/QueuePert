@@ -33,6 +33,7 @@ function TransactionHistory() {
           {transactions.length === 0 ? (
             <p>No transactions found.</p>
           ) : (
+            <div className="table-container">
             <table className="history-table">
               <thead>
                 <tr>
@@ -54,6 +55,7 @@ function TransactionHistory() {
                 ))}
               </tbody>
             </table>
+            </div>
           )}
 
         </div>

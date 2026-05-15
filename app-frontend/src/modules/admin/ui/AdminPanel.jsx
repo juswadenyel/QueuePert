@@ -99,7 +99,6 @@ const AdminPanel = ({ target, setTarget, counters, onAddToCounter, onNext, onNoS
       <button
         className="action-btn"
         onClick={onRefresh}
-        style={{ background: 'transparent', color: '#7A1E2C', border: '2px solid #7A1E2C', marginTop: '8px' }}
       >
         ↻ Refresh Queue
       </button>
