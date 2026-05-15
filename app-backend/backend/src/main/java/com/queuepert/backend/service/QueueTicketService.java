@@ -7,17 +7,24 @@ import org.springframework.stereotype.Service;
 
 import com.queuepert.backend.entity.QueueTicketEntity;
 import com.queuepert.backend.repository.QueueTicketRepository;
+import com.queuepert.backend.repository.StudentRepository;  
 
 @Service
 public class QueueTicketService {
 
     private final QueueTicketRepository queueTicketRepository;
+    private final StudentRepository studentRepository; 
 
-    public QueueTicketService(QueueTicketRepository repo) {
+    public QueueTicketService(QueueTicketRepository repo, StudentRepository studentRepository) { 
         this.queueTicketRepository = repo;
+        this.studentRepository = studentRepository; 
     }
 
     public QueueTicketEntity createQueueTicket(QueueTicketEntity ticket) {
+        if (ticket.getStudent() != null && ticket.getStudent().getStudentId() != null) {
+            studentRepository.findById(ticket.getStudent().getStudentId())
+                .ifPresent(ticket::setStudent);
+        }
         ticket.setQueueId(generateNextQueueId());
         ticket.setPriorityNumber(generateNextPriorityNumber());
         ticket.setStatus("waiting");
@@ -33,16 +40,21 @@ public class QueueTicketService {
         return queueTicketRepository.findByStatus("waiting");
     }
 
+    public List<QueueTicketEntity> getServingTickets() {
+        return queueTicketRepository.findByStatus("serving");
+    }
+
     public QueueTicketEntity getTicketById(int id) {
         return queueTicketRepository.findById(id).orElse(null);
     }
 
-    public QueueTicketEntity updateStatus(int id, String newStatus) {
+    public QueueTicketEntity updateStatus(int id, String newStatus, String counterNumber) {
         QueueTicketEntity ticket = queueTicketRepository.findById(id).orElse(null);
         if (ticket == null) return null;
         ticket.setStatus(newStatus);
         if (newStatus.equals("serving")) {
             ticket.setTimeServed(LocalDateTime.now());
+            if (counterNumber != null) ticket.setCounterNumber(counterNumber);
         }
         return queueTicketRepository.save(ticket);
     }

@@ -7,10 +7,18 @@ export const QueueProvider = ({ children }) => {
   const [servedTimes, setServedTimes] = useState([]);
   const [counters, setCounters] = useState(Array(8).fill(null).map(() => []));
   const [noShowCount, setNoShowCount] = useState(0);
+  const [latestTicket, setLatestTicket] = useState(null);
 
   useEffect(() => {
-    fetchWaitingTickets();
+    fetchWaitingTickets(); 
+    fetchServingTickets();
+    const interval = setInterval(() => {
+      fetchWaitingTickets(); 
+      fetchServingTickets();
+    }, 3000);
+    return () => clearInterval(interval);
   }, []);
+
 
   async function fetchWaitingTickets() {
     try {
@@ -35,6 +43,35 @@ export const QueueProvider = ({ children }) => {
     }
   }
 
+
+  async function fetchServingTickets() {
+    try {
+      const res = await fetch("http://localhost:8080/queue/serving");
+      if (!res.ok) return;
+      const data = await res.json();
+      const newCounters = Array(8).fill(null).map(() => []);
+      data.forEach(ticket => {
+        const idx = ticket.counterNumber ? parseInt(ticket.counterNumber) - 1 : 0;
+        if (idx >= 0 && idx < 8) {
+          newCounters[idx].push({
+            queueId:         ticket.queueId,
+            priorityNumber:  ticket.priorityNumber,
+            studentId:       ticket.studentId,
+            fullName:        ticket.studentFullName,
+            course:          ticket.course,           
+            yearLevel:       ticket.yearLevel,       
+            transactionType: ticket.transactionType,
+            semester:        ticket.semester,         
+            amount:          ticket.amount,         
+          });
+        }
+      });
+      setCounters(newCounters);
+    } catch (err) {
+      console.error("Failed to load serving tickets:", err);
+    }
+  }
+
   function getAdminId() {
     const admin = JSON.parse(localStorage.getItem("admin") || "{}");
     return admin.adminId || null;
@@ -51,7 +88,7 @@ export const QueueProvider = ({ children }) => {
       const remainingQueue = prevQueue.slice(1);
       setServedTimes((prev) => [...prev, Date.now() - nextItem.timeCreated]);
 
-      fetch(`http://localhost:8080/queue/${nextItem.queueId}/status?status=serving`, {
+      fetch(`http://localhost:8080/queue/${nextItem.queueId}/status?status=serving&counterNumber=${counterIndex + 1}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -141,6 +178,8 @@ export const QueueProvider = ({ children }) => {
     markNoShow,
     cancelQueue,
     fetchWaitingTickets,
+    latestTicket,
+    setLatestTicket,
   };
 
   return <QueueContext.Provider value={value}>{children}</QueueContext.Provider>;

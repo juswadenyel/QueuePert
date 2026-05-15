@@ -2,10 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PriorityFormCard from "./ui/PriorityFormCard";
 import Navbar from "../../components/Navbar";
+import { useQueue } from "../../context/QueueContext";
 
 function PriorityForm() {
   const navigate = useNavigate();
-
+  const { setLatestTicket } = useQueue();
   const loggedInStudentRaw = localStorage.getItem("student");
   const loggedInStudent = loggedInStudentRaw
     ? JSON.parse(loggedInStudentRaw)
@@ -51,9 +52,10 @@ function PriorityForm() {
         return;
       }
 
-      // Ticket saved to database successfully
+      const ticketData = await response.json();
+      setLatestTicket(ticketData);
       navigate("/student/queue");
-
+      
     } catch (err) {
       console.error(err);
       alert("Cannot connect to server. Make sure the backend is running.");
@@ -64,6 +66,7 @@ function PriorityForm() {
     <div className="login-page">
       <Navbar role="form" />
       <PriorityFormCard
+        form={form}
         onChange={handleChange}
         onSubmit={handleSubmit}
       />

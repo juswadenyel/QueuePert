@@ -44,6 +44,11 @@ public class QueueTicketController {
         return ResponseEntity.ok(queueTicketService.getWaitingTickets());
     }
 
+    @GetMapping("/serving")
+    public ResponseEntity<List<QueueTicketEntity>> getServingTickets() {
+        return ResponseEntity.ok(queueTicketService.getServingTickets());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getTicketById(@PathVariable int id) {
         QueueTicketEntity ticket = queueTicketService.getTicketById(id);
@@ -55,12 +60,14 @@ public class QueueTicketController {
     public ResponseEntity<?> updateStatus(
             @PathVariable int id,
             @RequestParam String status,
+            @RequestParam(required = false) String counterNumber,
             @RequestHeader(value = "X-Admin-Id", required = false) Integer adminId) {
 
         if (adminId == null) {
             return ResponseEntity.status(401).body("Admin login required");
         }
-        QueueTicketEntity updated = queueTicketService.updateStatus(id, status);
+
+        QueueTicketEntity updated = queueTicketService.updateStatus(id, status, counterNumber);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
     }
@@ -70,4 +77,5 @@ public class QueueTicketController {
         queueTicketService.deleteTicket(id);
         return ResponseEntity.noContent().build();
     }
+
 }

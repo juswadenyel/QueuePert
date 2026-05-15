@@ -18,7 +18,7 @@ public class QueueTicketEntity {
     @Id
     private int queueId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "student_id")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private StudentEntity student;
