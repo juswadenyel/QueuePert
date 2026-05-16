@@ -2,29 +2,23 @@ package com.queuepert.backend.service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
 import com.queuepert.backend.entity.QueueTicketEntity;
 import com.queuepert.backend.repository.QueueTicketRepository;
-import com.queuepert.backend.repository.StudentRepository;  
 
 @Service
 public class QueueTicketService {
 
     private final QueueTicketRepository queueTicketRepository;
-    private final StudentRepository studentRepository; 
 
-    public QueueTicketService(QueueTicketRepository repo, StudentRepository studentRepository) { 
+    public QueueTicketService(QueueTicketRepository repo) {
         this.queueTicketRepository = repo;
-        this.studentRepository = studentRepository; 
     }
 
     public QueueTicketEntity createQueueTicket(QueueTicketEntity ticket) {
-        if (ticket.getStudent() != null && ticket.getStudent().getStudentId() != null) {
-            studentRepository.findById(ticket.getStudent().getStudentId())
-                .ifPresent(ticket::setStudent);
-        }
         ticket.setQueueId(generateNextQueueId());
         ticket.setPriorityNumber(generateNextPriorityNumber());
         ticket.setStatus("waiting");
@@ -60,6 +54,19 @@ public class QueueTicketService {
             ticket.setTimeServed(LocalDateTime.now());
             if (counterNumber != null) ticket.setCounterNumber(counterNumber);
         }
+        return queueTicketRepository.save(ticket);
+    }
+
+    // ADDED: update editable ticket fields (transactionType, semester, amount) in DB
+    public QueueTicketEntity updateDetails(int id, Map<String, Object> fields) {
+        QueueTicketEntity ticket = queueTicketRepository.findById(id).orElse(null);
+        if (ticket == null) return null;
+        if (fields.containsKey("transactionType"))
+            ticket.setTransactionType((String) fields.get("transactionType"));
+        if (fields.containsKey("semester"))
+            ticket.setSemester((String) fields.get("semester"));
+        if (fields.containsKey("amount") && fields.get("amount") != null)
+            ticket.setAmount(Double.parseDouble(fields.get("amount").toString()));
         return queueTicketRepository.save(ticket);
     }
 

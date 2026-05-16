@@ -10,15 +10,14 @@ export const QueueProvider = ({ children }) => {
   const [latestTicket, setLatestTicket] = useState(null);
 
   useEffect(() => {
-    fetchWaitingTickets(); 
+    fetchWaitingTickets();
     fetchServingTickets();
     const interval = setInterval(() => {
-      fetchWaitingTickets(); 
+      fetchWaitingTickets();
       fetchServingTickets();
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-
 
   async function fetchWaitingTickets() {
     try {
@@ -43,7 +42,6 @@ export const QueueProvider = ({ children }) => {
     }
   }
 
-
   async function fetchServingTickets() {
     try {
       const res = await fetch("http://localhost:8080/queue/serving");
@@ -51,18 +49,19 @@ export const QueueProvider = ({ children }) => {
       const data = await res.json();
       const newCounters = Array(8).fill(null).map(() => []);
       data.forEach(ticket => {
-        const idx = ticket.counterNumber ? parseInt(ticket.counterNumber) - 1 : 0;
+        if (!ticket.counterNumber || !ticket.priorityNumber) return;
+        const idx = parseInt(ticket.counterNumber) - 1;
         if (idx >= 0 && idx < 8) {
           newCounters[idx].push({
             queueId:         ticket.queueId,
             priorityNumber:  ticket.priorityNumber,
             studentId:       ticket.studentId,
             fullName:        ticket.studentFullName,
-            course:          ticket.course,           
-            yearLevel:       ticket.yearLevel,       
+            course:          ticket.course,
+            yearLevel:       ticket.yearLevel,
             transactionType: ticket.transactionType,
-            semester:        ticket.semester,         
-            amount:          ticket.amount,         
+            semester:        ticket.semester,
+            amount:          ticket.amount,
           });
         }
       });
@@ -94,13 +93,16 @@ export const QueueProvider = ({ children }) => {
           "Content-Type": "application/json",
           "X-Admin-Id": getAdminId(),
         },
-      }).catch(err => console.error("Failed to update status:", err));
+      })
+      // CHANGED: removed local setCounters update, now re-fetches from DB after PATCH succeeds
+      // so ServingDisplay always shows accurate data from the database
+      .then(() => {
+        fetchWaitingTickets();
+        fetchServingTickets();
+      })
+      .catch(err => console.error("Failed to update status:", err));
 
-      setCounters((prevCounters) => {
-        const newCounters = [...prevCounters];
-        newCounters[counterIndex] = [...newCounters[counterIndex], nextItem];
-        return newCounters;
-      });
+      // REMOVED: setCounters local optimistic update — caused race condition with polling
       return remainingQueue;
     });
   };
@@ -120,7 +122,13 @@ export const QueueProvider = ({ children }) => {
             "Content-Type": "application/json",
             "X-Admin-Id": getAdminId(),
           },
-        }).catch(err => console.error("Failed to update status:", err));
+        })
+        // ADDED: re-fetch after marking done so counters update immediately
+        .then(() => {
+          fetchWaitingTickets();
+          fetchServingTickets();
+        })
+        .catch(err => console.error("Failed to update status:", err));
       }
       return updated;
     });
@@ -141,7 +149,13 @@ export const QueueProvider = ({ children }) => {
             "Content-Type": "application/json",
             "X-Admin-Id": getAdminId(),
           },
-        }).catch(err => console.error("Failed to update status:", err));
+        })
+        // ADDED: re-fetch after marking noshow so counters update immediately
+        .then(() => {
+          fetchWaitingTickets();
+          fetchServingTickets();
+        })
+        .catch(err => console.error("Failed to update status:", err));
       }
       return updated;
     });

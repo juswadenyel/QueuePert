@@ -47,7 +47,7 @@ const Dashboard = () => {
             <div className="panel target-header" style={{ padding: '20px', textAlign: 'center' }}>
               <h2 style={{ margin: 0, fontSize: '24px' }}>Now Serving:</h2>
               <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '10px' }}>
-                Counter {target + 1}: {activeStudentsAtCounter[0]?.id || "none"}
+                Counter {target + 1}: {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.priorityNumber).join(", ") : "Empty"}
               </p>
             </div>
             
