@@ -1,6 +1,7 @@
 package com.queuepert.backend.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -49,6 +50,12 @@ public class QueueTicketController {
         return ResponseEntity.ok(queueTicketService.getServingTickets());
     }
 
+    // ADDED: get all tickets for a specific student
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<QueueTicketEntity>> getTicketsByStudent(@PathVariable String studentId) {
+        return ResponseEntity.ok(queueTicketService.getTicketsByStudentId(studentId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getTicketById(@PathVariable int id) {
         QueueTicketEntity ticket = queueTicketService.getTicketById(id);
@@ -66,8 +73,22 @@ public class QueueTicketController {
         if (adminId == null) {
             return ResponseEntity.status(401).body("Admin login required");
         }
-
         QueueTicketEntity updated = queueTicketService.updateStatus(id, status, counterNumber);
+        if (updated == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updated);
+    }
+
+    // ADDED: update ticket details (transactionType, semester, amount) from admin edit modal
+    @PatchMapping("/{id}/details")
+    public ResponseEntity<?> updateDetails(
+            @PathVariable int id,
+            @RequestBody Map<String, Object> fields,
+            @RequestHeader(value = "X-Admin-Id", required = false) Integer adminId) {
+
+        if (adminId == null) {
+            return ResponseEntity.status(401).body("Admin login required");
+        }
+        QueueTicketEntity updated = queueTicketService.updateDetails(id, fields);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
     }
