@@ -3,6 +3,8 @@ package com.queuepert.backend.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.processing.Pattern;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

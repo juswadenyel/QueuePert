@@ -164,6 +164,16 @@ export const QueueProvider = ({ children }) => {
     }
   };
 
+  const updateStudent = (counterIndex, priorityNumber, updatedData) => {
+    setCounters(prev => {
+      const updated = [...prev];
+      updated[counterIndex] = updated[counterIndex].map(item =>
+        item.priorityNumber === priorityNumber ? { ...item, ...updatedData } : item
+      );
+      return updated;
+    });
+  };
+
   const value = {
     counters,
     queueList:       queue,
@@ -178,6 +188,7 @@ export const QueueProvider = ({ children }) => {
     markNoShow,
     cancelQueue,
     fetchWaitingTickets,
+    updateStudent,
     latestTicket,
     setLatestTicket,
   };

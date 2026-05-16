@@ -35,7 +35,7 @@ const TransactionInfo = ({ students, target }) => {
                 <button onClick={() => handleOpenEdit(student)} className="edit-btn">EDIT</button>
               </div>
               <p><strong>Name:</strong> {student.fullName}</p>
-              <p><strong>ID:</strong> {student.studentId}</p>
+              <p><strong>ID:</strong> {String(student.studentId)}</p>
               <p><strong>Course:</strong> {student.course}</p>
               <p><strong>Year Level:</strong> {student.yearLevel}</p>
               <p><strong>Semester:</strong> {student.semester}</p>
@@ -65,7 +65,7 @@ const TransactionInfo = ({ students, target }) => {
         <label>Student ID</label>
         <input
           name="studentId"
-          value={tempData.studentId || ""}
+          value={String(tempData.studentId || "")}
           onChange={handleChange}
         />
 
@@ -77,25 +77,29 @@ const TransactionInfo = ({ students, target }) => {
         />
 
         <label>Year Level</label>
-        <input
-          name="yearLevel"
-          value={tempData.yearLevel || ""}
-          onChange={handleChange}
-        />
+              <select name="yearLevel" value={tempData.yearLevel || ""} onChange={handleChange}>
+                <option value="">-- Select --</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+              </select>
 
         <label>Semester</label>
-        <input
-          name="semester"
-          value={tempData.semester || ""}
-          onChange={handleChange}
-        />
+              <select name="semester" value={tempData.semester || ""} onChange={handleChange}>
+                <option value="">-- Select --</option>
+                <option value="First Term">First Term</option>
+                <option value="Second Term">Second Term</option>
+                <option value="Mid Year Term">Mid Year Term</option>
+              </select>
 
         <label>Transaction Type</label>
-        <input
-          name="transactionType"
-          value={tempData.transactionType || ""}
-          onChange={handleChange}
-        />
+              <select name="transactionType" value={tempData.transactionType || ""} onChange={handleChange}>
+                <option value="">-- Select --</option>
+                <option value="Tuition Payment">Tuition Payment</option>
+                <option value="Clearance">Clearance</option>
+                <option value="Enrollment">Enrollment</option>
+              </select>
 
         <label>Amount</label>
         <input

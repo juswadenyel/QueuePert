@@ -44,6 +44,10 @@ public class QueueTicketService {
         return queueTicketRepository.findByStatus("serving");
     }
 
+    public List<QueueTicketEntity> getTicketsByStudentId(String studentId) {
+        return queueTicketRepository.findByStudent_StudentId(studentId);
+    }
+
     public QueueTicketEntity getTicketById(int id) {
         return queueTicketRepository.findById(id).orElse(null);
     }

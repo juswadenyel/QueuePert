@@ -49,6 +49,11 @@ public class QueueTicketController {
         return ResponseEntity.ok(queueTicketService.getServingTickets());
     }
 
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<QueueTicketEntity>> getTicketsByStudent(@PathVariable String studentId) {
+        return ResponseEntity.ok(queueTicketService.getTicketsByStudentId(studentId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<?> getTicketById(@PathVariable int id) {
         QueueTicketEntity ticket = queueTicketService.getTicketById(id);
