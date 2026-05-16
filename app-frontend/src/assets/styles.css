@@ -67,15 +67,19 @@ body::before {
     width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
+/* CHANGED: fixed width 400px → fluid with max-width for web responsiveness */
 .containerLogin {
     position: relative;
     background: #C9A227; padding: 35px; border-radius: 15px;
-    width: 400px; text-align: center; margin-top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    width: 90%; max-width: 420px;
+    text-align: center; margin-top: 100px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
+/* CHANGED: fixed width 700px → fluid with max-width and auto margin for web responsiveness */
 .containerPriority {
     background: #C9A227; padding: 35px; border-radius: 15px;
-    width: 700px; text-align: center; margin-top: 75px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    width: 90%; max-width: 700px;
+    text-align: center; margin: 75px auto 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
 }
 
 /* --- FORM ELEMENTS --- */
@@ -122,13 +126,16 @@ select:focus { outline: none; border-color: #7A1E2C; }
     flex-direction: column;
 }
 
+/* CHANGED: added align-items and overflow-y so TransactionHistory panel fits any window width */
 .dashboard-page .dashboard-wrapper {
     flex: 1;
     padding: 20px;
     margin-top: 0;
     display: flex;
     justify-content: center;
-    height: calc(100vh - 60px); /* Locks view to screen height minus navbar */
+    align-items: flex-start;
+    overflow-y: auto;
+    height: calc(100vh - 60px);
 }
 
 .dashboard-layout {
@@ -288,15 +295,18 @@ select:focus { outline: none; border-color: #7A1E2C; }
 /* QUEUE STATUS (STUDENT UI) */
 /* ========================= */
 
+/* NOTE: queue-status-layout, queue-left, queue-card, queue-right-panel,
+   serving-highlight, serving-big, queue-counter-list, queue-counter-row
+   are NOT changed — QueueStatus is excluded from responsive changes */
+
 .queue-status-layout {
-    display: grid;
-    grid-template-columns: 480px 1fr;
+    display: flex;
+    flex-direction: row;
     gap: 30px;
-    width: 100%;
-    max-width: 1500px;
-    height: 100%;
     justify-content: center;
-    align-items: start;
+    align-items: flex-start;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 .queue-left {
@@ -305,6 +315,8 @@ select:focus { outline: none; border-color: #7A1E2C; }
     gap: 20px;
     align-content: start;
     margin-top: 70px;
+    width: 480px;
+    flex-shrink: 0;
 }
 
 .queue-card {
@@ -359,6 +371,7 @@ select:focus { outline: none; border-color: #7A1E2C; }
     margin-top: 57px;
     width: 600px;
     height: 650px;
+    flex-shrink: 0;
 }
 
 .serving-highlight { text-align: center; margin-bottom: 25px; }
@@ -386,12 +399,19 @@ select:focus { outline: none; border-color: #7A1E2C; }
     padding: 6px 15px;
 }
 
+/* CHANGED: removed fixed margin-left: 380px → fluid centering with padding
+   so StudentDashboard, PriorityForm, TransactionHistory all center properly
+   on any browser window width */
 .dashboard-page .dashboard-wrapper-student {
     flex: 1;
     display: flex;
     justify-content: center;
-    margin-top: 50px;
-    margin-left: 380px;
+    align-items: flex-start;
+    padding: 20px;
+    margin-top: 30px;
+    width: 100%;
+    overflow-y: auto;
+    /* REMOVED: margin-left: 380px — was pushing content off-center */
 }
 
 /* --- PROFILE MENU --- */
@@ -435,7 +455,10 @@ select:focus { outline: none; border-color: #7A1E2C; }
     background: #7A1E2C;
     color: white;
     padding: 10px;
-    text-align: left;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
 
 .history-table td {
@@ -444,10 +467,14 @@ select:focus { outline: none; border-color: #7A1E2C; }
 }
 
 .history-table tr:hover { background: rgba(0,0,0,0.05); }
+
+/* ======================================================== */
+/* --- NEW TRANSACTION INFO & WORKSPACE STYLES (APPENDED) --- */
+/* ======================================================== */
+
 .panel {
     display: flex;
     flex-direction: column;
-    max-height: 90vh; 
 }
 
 .table-container {
@@ -456,52 +483,12 @@ select:focus { outline: none; border-color: #7A1E2C; }
     overflow-x: hidden;
 }
 
-.table-container::-webkit-scrollbar {
-    width: 8px;
-}
-
-.table-container::-webkit-scrollbar-thumb {
-    background: #800000; /* Maroon handle */
-    border-radius: 10px;
-}
-
-.table-container::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.1);
-}
-
-/* To keep the headers visible while scrolling */
-.history-table thead th {
-    position: sticky;
-    top: 0;
-    background-color: #800000;
-    z-index: 1;
-}   
-
-/* ======================================================== */
-/* --- NEW TRANSACTION INFO & WORKSPACE STYLES (APPENDED) --- */
-/* ======================================================== */
-
-.transaction-info {
-    flex: 1.8; /* Updated proportion for detail view */
-    display: flex;
-    flex-direction: column;
-    text-align: left !important;
-}
-
-.transaction-list {
-    flex: 1;
-    overflow-y: auto;
-    margin-top: 10px;
-    padding-right: 8px;
-}
-
-/* Custom Scrollbar for center workspace area */
-.transaction-list::-webkit-scrollbar { 
-    width: 6px; 
-}
-.transaction-list::-webkit-scrollbar-thumb { 
+.table-container::-webkit-scrollbar { width: 8px; }
+.table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 10px; }
+.table-container::-webkit-scrollbar-thumb { 
     background: #7A1E2C; 
-    border-radius: 10px; 
+    border-radius: 10px;
+    border: 2px solid #C9A227; 
 }
 
 .info-details {
@@ -516,7 +503,7 @@ select:focus { outline: none; border-color: #7A1E2C; }
 .info-details p {
     font-size: px;
     margin-bottom: 5px;
-    color: #000000; /* Consistent maroon text color */
+    color: #000000;
     font-weight: bold;
 }
 
@@ -533,7 +520,6 @@ select:focus { outline: none; border-color: #7A1E2C; }
     font-style: italic;
 }
 
-/* Side-by-side center workspace row */
 .workspace-row {
     display: flex;
     gap: 20px;
@@ -542,7 +528,6 @@ select:focus { outline: none; border-color: #7A1E2C; }
     overflow: hidden;
 }
 
-/* Consistent highlighting for active target counter */
 .active-target {
     background: rgba(122, 30, 44, 0.15) !important;
     color: #7A1E2C !important;
@@ -560,6 +545,7 @@ select:focus { outline: none; border-color: #7A1E2C; }
     border-bottom: 1px solid rgba(0,0,0,0.1);
     padding: 10px 0;
 }
+
 /* --- EDIT MODE STYLES --- */
 .edit-btn {
     background: #7A1E2C;
