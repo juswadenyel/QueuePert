@@ -24,19 +24,23 @@ export const QueueProvider = ({ children }) => {
       const res = await fetch("http://localhost:8080/queue/waiting");
       if (!res.ok) return;
       const data = await res.json();
-      setQueue(data.map(ticket => ({
-        queueId:         ticket.queueId,
-        priorityNumber:  ticket.priorityNumber,
-        studentId:       ticket.studentId,
-        fullName:        ticket.studentFullName,
-        course:          ticket.course,
-        yearLevel:       ticket.yearLevel,
-        transactionType: ticket.transactionType,
-        semester:        ticket.semester,
-        amount:          ticket.amount,
-        status:          ticket.status,
-        timeCreated:     new Date(ticket.timeCreated).getTime(),
-      })));
+      setQueue(prevQueue => data.map(ticket => {
+        const existing = prevQueue.find(q => q.queueId === ticket.queueId);
+        return {
+          queueId:          ticket.queueId,
+          priorityNumber:   ticket.priorityNumber,
+          studentId:        ticket.studentId,
+          fullName:         ticket.studentFullName,
+          course:           ticket.course,
+          yearLevel:        ticket.yearLevel,
+          transactionType:  ticket.transactionType,
+          semester:         ticket.semester,
+          amount:           ticket.amount,
+          status:           ticket.status,
+          timeCreated:      new Date(ticket.timeCreated).getTime(),
+          timeAddedToQueue: existing ? existing.timeAddedToQueue : Date.now(),
+        };
+      }));
     } catch (err) {
       console.error("Failed to load queue:", err);
     }
@@ -85,7 +89,14 @@ export const QueueProvider = ({ children }) => {
       if (prevQueue.length === 0) return prevQueue;
       const nextItem = prevQueue[0];
       const remainingQueue = prevQueue.slice(1);
-      setServedTimes((prev) => [...prev, Date.now() - nextItem.timeCreated]);
+
+      const waitMs = nextItem.timeAddedToQueue
+        ? Date.now() - nextItem.timeAddedToQueue
+        : 0;
+
+      if (waitMs > 0) {
+        setServedTimes((prev) => [...prev, waitMs]);
+      }
 
       fetch(`http://localhost:8080/queue/${nextItem.queueId}/status?status=serving&counterNumber=${counterIndex + 1}`, {
         method: "PATCH",
@@ -94,15 +105,12 @@ export const QueueProvider = ({ children }) => {
           "X-Admin-Id": getAdminId(),
         },
       })
-      // CHANGED: removed local setCounters update, now re-fetches from DB after PATCH succeeds
-      // so ServingDisplay always shows accurate data from the database
       .then(() => {
         fetchWaitingTickets();
         fetchServingTickets();
       })
       .catch(err => console.error("Failed to update status:", err));
 
-      // REMOVED: setCounters local optimistic update — caused race condition with polling
       return remainingQueue;
     });
   };
@@ -123,7 +131,6 @@ export const QueueProvider = ({ children }) => {
             "X-Admin-Id": getAdminId(),
           },
         })
-        // ADDED: re-fetch after marking done so counters update immediately
         .then(() => {
           fetchWaitingTickets();
           fetchServingTickets();
@@ -150,7 +157,6 @@ export const QueueProvider = ({ children }) => {
             "X-Admin-Id": getAdminId(),
           },
         })
-        // ADDED: re-fetch after marking noshow so counters update immediately
         .then(() => {
           fetchWaitingTickets();
           fetchServingTickets();
@@ -163,18 +169,29 @@ export const QueueProvider = ({ children }) => {
   };
 
   const cancelQueue = (priorityNumber) => {
-    const ticket = queue.find(q => q.priorityNumber === priorityNumber);
+    if (!priorityNumber) return;
+
+    const ticketInQueue = queue.find(q => q.priorityNumber === priorityNumber);
+    const ticketInCounter = counters.flat().find(t => t.priorityNumber === priorityNumber);
+    const ticket = ticketInQueue || ticketInCounter;
+
     setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
     setCounters((prev) =>
       prev.map((counter) =>
         counter.filter((item) => item.priorityNumber !== priorityNumber)
       )
     );
+
     if (ticket?.queueId) {
       fetch(`http://localhost:8080/queue/${ticket.queueId}`, {
         method: "DELETE",
         headers: { "X-Admin-Id": getAdminId() },
-      }).catch(err => console.error("Failed to delete ticket:", err));
+      })
+      .then(() => {
+        fetchWaitingTickets();
+        fetchServingTickets();
+      })
+      .catch(err => console.error("Failed to cancel ticket:", err));
     }
   };
 
@@ -202,6 +219,7 @@ export const QueueProvider = ({ children }) => {
     markNoShow,
     cancelQueue,
     fetchWaitingTickets,
+    fetchServingTickets,
     updateStudent,
     latestTicket,
     setLatestTicket,
