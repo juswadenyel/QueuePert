@@ -1,55 +1,87 @@
-// QueueRequest.jsx
-// QueuePert – CIT-U Queue Management System
-// Student-facing page: select a service and get a queue ticket
-
 import React, { useState } from 'react';
-import { requestTicket, SERVICE_LABELS } from './queueService';
-import '../assets/styles.css';
+import '../../assets/styles.css';
 
-// ─── Service options ──────────────────────────────────────────────────────────
-const SERVICES = [
-  { key:'registrar', icon:'📋', label:'Registrar',  sub:'Enrollment / OTR', queue: 12 },
-  { key:'cashier',   icon:'💳', label:'Cashier',    sub:'Tuition & Fees',   queue: 8  },
-  { key:'guidance',  icon:'💬', label:'Guidance',   sub:'Counseling',       queue: 4  },
-  { key:'osas',      icon:'🎓', label:'OSAS',       sub:'Scholarships',     queue: 6  },
-  { key:'it',        icon:'💻', label:'IT Support', sub:'Tech Assistance',  queue: 0  },
+// Cashier only — removed Registrar, Guidance, OSAS, IT
+const TRANSACTION_TYPES = [
+  { value: 'Tuition Payment', label: 'Tuition Payment' },
+  { value: 'Clearance',       label: 'Clearance'       },
+  { value: 'Enrollment',      label: 'Enrollment'      },
 ];
 
-// ─── Component ────────────────────────────────────────────────────────────────
-export default function QueueRequest() {
-  const [selectedService, setSelectedService] = useState(null);
-  const [studentId, setStudentId] = useState('');
-  const [name, setName]           = useState('');
-  const [loading, setLoading]     = useState(false);
-  const [error, setError]         = useState(null);
-  const [ticket, setTicket]       = useState(null);
+const SEMESTERS = [
+  { value: 'First Term',    label: 'First Term'    },
+  { value: 'Second Term',   label: 'Second Term'   },
+  { value: 'Mid Year Term', label: 'Mid Year Term' },
+];
 
+export default function QueueRequest() {
+  const [studentId, setStudentId]         = useState('');
+  const [studentInfo, setStudentInfo]     = useState(null);
+  const [idChecked, setIdChecked]         = useState(false);
+  const [idLoading, setIdLoading]         = useState(false);
+  const [idError, setIdError]             = useState(null);
+  const [transactionType, setTransaction] = useState('');
+  const [semester, setSemester]           = useState('');
+  const [amount, setAmount]               = useState('');
+  const [loading, setLoading]             = useState(false);
+  const [error, setError]                 = useState(null);
+  const [ticket, setTicket]               = useState(null);
+
+  // STEP 1 — Check if student ID exists in the database
+  async function handleCheckId() {
+    if (!studentId.trim()) { setIdError('Please enter your Student ID.'); return; }
+    setIdError(null);
+    setIdLoading(true);
+    try {
+      const res = await fetch(`http://localhost:8080/student/${studentId.trim()}`);
+      if (!res.ok) {
+        setIdError('Student not found. Please check your ID or contact the registrar.');
+        setIdChecked(false);
+        setStudentInfo(null);
+        return;
+      }
+      const data = await res.json();
+      setStudentInfo(data);
+      setIdChecked(true);
+    } catch (err) {
+      setIdError('Cannot connect to server.');
+    } finally {
+      setIdLoading(false);
+    }
+  }
+
+  // STEP 2 — Submit the queue ticket request
   async function handleSubmit() {
-    if (!selectedService) { setError('Please select a service counter.'); return; }
-    if (!studentId.trim()) { setError('Please enter your Student ID.'); return; }
-    if (!name.trim())      { setError('Please enter your name.'); return; }
+    if (!transactionType) { setError('Please select a transaction type.'); return; }
+    if (!semester)        { setError('Please select a semester.'); return; }
+    if (!amount)          { setError('Please enter the amount.'); return; }
 
     setError(null);
     setLoading(true);
     try {
-      const result = await requestTicket(selectedService, {
-        studentId: studentId.trim(),
-        name: name.trim(),
+      const response = await fetch('http://localhost:8080/queue/request', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          student:         { studentId: studentId.trim() },
+          transactionType: transactionType,
+          semester:        semester,
+          amount:          parseFloat(amount),
+        })
       });
-      setTicket(result);
-    } catch {
-      // Demo fallback
-      const svc    = SERVICES.find(s => s.key === selectedService);
-      const prefix = { registrar:'A', cashier:'B', guidance:'C', osas:'D', it:'E' }[selectedService];
-      setTicket({
-        ticketNumber: `${prefix}-${String(Math.floor(Math.random() * 50) + 50).padStart(3, '0')}`,
-        position:      svc.queue + 1,
-        estimatedWait: (svc.queue + 1) * 4,
-        counterLabel:  `Counter · ${svc.label}`,
-        studentId:     studentId.trim(),
-        name:          name.trim(),
-        issuedAt:      new Date().toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }),
-      });
+
+      if (!response.ok) {
+        const err = await response.json();
+        setError(err.error || 'Failed to get ticket. Try again.');
+        return;
+      }
+
+      const data = await response.json();
+      setTicket(data);
+
+    } catch (err) {
+      console.error(err);
+      setError('Cannot connect to server. Make sure the backend is running.');
     } finally {
       setLoading(false);
     }
@@ -57,16 +89,20 @@ export default function QueueRequest() {
 
   function handleReset() {
     setTicket(null);
-    setSelectedService(null);
     setStudentId('');
-    setName('');
+    setStudentInfo(null);
+    setIdChecked(false);
+    setIdError(null);
+    setTransaction('');
+    setSemester('');
+    setAmount('');
     setError(null);
   }
 
   return (
     <div className="login-page">
 
-      {/* ── Navbar ── */}
+      {/* Navbar */}
       <div className="navbar">
         <div className="logo">QueuePert</div>
         <div className="nav-buttons">
@@ -80,85 +116,119 @@ export default function QueueRequest() {
 
         {!ticket ? (
 
-          /* ── Request Form ── */
           <div className="containerLogin">
             <h1>Get Your Number</h1>
             <p className="description">
-              Select a service counter, fill in your details, and receive your queue ticket.
+              💳 Cashier — Enter your Student ID to get started.
             </p>
 
-            {/* Student ID */}
-            <label className="input-label">Student ID</label>
-            <input
-              type="text"
-              placeholder="e.g. 21-2345-678"
-              value={studentId}
-              onChange={e => setStudentId(e.target.value)}
-            />
-
-            {/* Full Name */}
-            <label className="input-label">Full Name</label>
-            <input
-              type="text"
-              placeholder="Last name, First name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-            />
-
-            {/* Divider */}
-            <p className="description" style={{ marginTop: '10px', marginBottom: '6px', fontSize: '12px' }}>
-              — Select a service counter —
-            </p>
-
-            {/* Service grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
-              {SERVICES.map(svc => {
-                const isClosed   = svc.key === 'it' && svc.queue === 0;
-                const isSelected = selectedService === svc.key;
-                return (
-                  <button
-                    key={svc.key}
-                    onClick={() => !isClosed && setSelectedService(svc.key)}
-                    disabled={isClosed}
-                    style={{
-                      background:   isSelected ? '#7A1E2C' : '#fff',
-                      border:       `2px solid ${isSelected ? '#7A1E2C' : '#ccc'}`,
-                      borderRadius: '8px',
-                      padding:      '10px',
-                      cursor:       isClosed ? 'not-allowed' : 'pointer',
-                      opacity:      isClosed ? 0.5 : 1,
-                      textAlign:    'left',
-                      transition:   'all 0.2s',
-                    }}
-                  >
-                    <div style={{ fontSize: '16px', marginBottom: '4px' }}>{svc.icon}</div>
-                    <div style={{ fontSize: '13px', fontWeight: 'bold', color: isSelected ? '#fff' : '#000' }}>
-                      {svc.label}
-                    </div>
-                    <div style={{ fontSize: '11px', color: isSelected ? 'rgba(255,255,255,0.7)' : '#666' }}>
-                      {svc.queue === 0 ? 'Closed today' : `${svc.queue} in queue`}
-                    </div>
-                  </button>
-                );
-              })}
+            {/* STEP 1 — Student ID + Check button */}
+            <label className="input-label" htmlFor="studentId">Student ID</label>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <input
+                id="studentId"
+                name="studentId"
+                type="text"
+                placeholder="e.g. 21-2345-678"
+                value={studentId}
+                onChange={e => {
+                  setStudentId(e.target.value);
+                  setIdChecked(false);      // reset verification if they change the ID
+                  setStudentInfo(null);
+                }}
+                style={{ flex: 1 }}
+              />
+              <button
+                className="action-btn"
+                onClick={handleCheckId}
+                disabled={idLoading}
+                style={{ whiteSpace: 'nowrap', padding: '8px 14px', fontSize: '13px' }}
+              >
+                {idLoading ? 'Checking...' : 'Check ID'}
+              </button>
             </div>
 
-            {/* Error */}
-            {error && (
-              <p style={{ color: '#7A1E2C', fontSize: '13px', marginBottom: '8px' }}>⚠ {error}</p>
+            {/* ID not found error */}
+            {idError && (
+              <p style={{ color: '#7A1E2C', fontSize: '13px', marginTop: '6px' }}>⚠ {idError}</p>
             )}
 
-            {/* Submit */}
-            <button className="action-btn" onClick={handleSubmit} disabled={loading}>
-              {loading ? 'Issuing ticket…' : 'Get Queue Ticket'}
-            </button>
+            {/* Green box — student found */}
+            {idChecked && studentInfo && (
+              <div style={{
+                background: '#E8F8ED', border: '1px solid #1E7A3A',
+                borderRadius: '8px', padding: '10px 14px',
+                marginTop: '8px', fontSize: '13px'
+              }}>
+                <p style={{ margin: 0, color: '#1E7A3A', fontWeight: 'bold' }}>✓ Student Found</p>
+                <p style={{ margin: '4px 0 0', color: '#333' }}>
+                  {studentInfo.lastName}, {studentInfo.firstName} {studentInfo.middleInitial}.
+                </p>
+                <p style={{ margin: '2px 0 0', color: '#555' }}>
+                  {studentInfo.course} — Year {studentInfo.yearLevel}
+                </p>
+              </div>
+            )}
+
+            {/* STEP 2 — Rest of form only appears after ID is confirmed */}
+            {idChecked && (
+              <>
+                <label className="input-label" htmlFor="semester" style={{ marginTop: '14px' }}>
+                  Semester
+                </label>
+                <select
+                  id="semester"
+                  name="semester"
+                  value={semester}
+                  onChange={e => setSemester(e.target.value)}
+                >
+                  <option value="">-- Choose semester --</option>
+                  {SEMESTERS.map(s => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
+                  ))}
+                </select>
+
+                <label className="input-label" htmlFor="transactionType">
+                  Type of Transaction
+                </label>
+                <select
+                  id="transactionType"
+                  name="transactionType"
+                  value={transactionType}
+                  onChange={e => setTransaction(e.target.value)}
+                >
+                  <option value="">-- Choose transaction --</option>
+                  {TRANSACTION_TYPES.map(t => (
+                    <option key={t.value} value={t.value}>{t.label}</option>
+                  ))}
+                </select>
+
+                <label className="input-label" htmlFor="amount">Amount (₱)</label>
+                <input
+                  id="amount"
+                  name="amount"
+                  type="number"
+                  placeholder="e.g. 500"
+                  value={amount}
+                  onChange={e => setAmount(e.target.value)}
+                />
+
+                {error && (
+                  <p style={{ color: '#7A1E2C', fontSize: '13px', marginBottom: '8px' }}>⚠ {error}</p>
+                )}
+
+                <button className="action-btn" onClick={handleSubmit} disabled={loading}>
+                  {loading ? 'Issuing ticket…' : 'Get Queue Ticket'}
+                </button>
+              </>
+            )}
           </div>
 
         ) : (
 
-          /* ── Ticket Confirmation ── */
+          /* Ticket confirmation — same design, real data from database */
           <div className="container" style={{ maxWidth: '380px' }}>
-            {/* Ticket header */}
+
             <div style={{
               background: '#C9A227', margin: '-35px -35px 20px -35px',
               padding: '20px', borderRadius: '15px 15px 0 0', textAlign: 'center',
@@ -171,29 +241,25 @@ export default function QueueRequest() {
               </div>
             </div>
 
-            {/* Service + big number */}
             <p className="description" style={{ textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '4px' }}>
-              {SERVICE_LABELS[selectedService]}
+              💳 Cashier
             </p>
-            <div className="serving-number">{ticket.ticketNumber}</div>
 
-            {/* Detail rows */}
+            <div className="serving-number">{ticket.priorityNumber}</div>
+
             {[
-              { label: 'Name',             value: ticket.name },
-              { label: 'Student ID',       value: ticket.studentId },
-              { label: 'Counter',          value: ticket.counterLabel },
-              { label: 'Position',         value: `#${ticket.position}` },
-              { label: 'Estimated Wait',   value: `~${ticket.estimatedWait} min` },
-              { label: 'Issued At',        value: ticket.issuedAt },
+              { label: 'Student ID',  value: ticket.studentId },
+              { label: 'Transaction', value: ticket.transactionType },
+              { label: 'Semester',    value: ticket.semester },
+              { label: 'Amount',      value: `₱${ticket.amount}` },
+              { label: 'Status',      value: ticket.status },
+              { label: 'Issued At',   value: new Date(ticket.timeCreated).toLocaleTimeString('en-PH', { hour: '2-digit', minute: '2-digit' }) },
             ].map(row => (
-              <div
-                key={row.label}
-                style={{
-                  display: 'flex', justifyContent: 'space-between',
-                  padding: '8px 0', borderBottom: '1px solid rgba(0,0,0,0.1)',
-                  fontSize: '13px',
-                }}
-              >
+              <div key={row.label} style={{
+                display: 'flex', justifyContent: 'space-between',
+                padding: '8px 0', borderBottom: '1px solid rgba(0,0,0,0.1)',
+                fontSize: '13px',
+              }}>
                 <span style={{ color: '#555' }}>{row.label}</span>
                 <span style={{ fontWeight: 'bold', color: '#000' }}>{row.value}</span>
               </div>
@@ -203,7 +269,8 @@ export default function QueueRequest() {
               Please stay within the premises and listen for your number to be called.
             </p>
 
-            <button className="action-btn" onClick={handleReset} style={{ marginTop: '14px', background: 'transparent', color: '#7A1E2C', border: '2px solid #7A1E2C' }}>
+            <button className="action-btn" onClick={handleReset}
+              style={{ marginTop: '14px', background: 'transparent', color: '#7A1E2C', border: '2px solid #7A1E2C' }}>
               ← Request Another Ticket
             </button>
           </div>

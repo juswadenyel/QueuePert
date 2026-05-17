@@ -1,48 +1,35 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../../assets/styles.css";// make sure path is correct
-import Admin from "./Admin";
-
+import "../../assets/styles.css";
 
 function Login() {
     const navigate = useNavigate();
     const [showForgot, setShowForgot] = useState(false);
-
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = async (e) => {
-    e.preventDefault();
+        e.preventDefault();
 
-    try {
+        try {
+            const response = await fetch("http://localhost:8080/student/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    universityEmail: email,
+                    password: password
+                })
+            });
 
-        const response = await fetch(
-    "http://localhost:8080/student/login",
-    {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            universityEmail: email,
-            password: password
-        })
-    }
-);
+            const data = await response.json();
 
-        const data = await response.json(); // ✅ correct
+            if (!response.ok || data === null) {
+                alert("Invalid email or password");
+                return;
+            }
 
-        if (!response.ok) {
-            alert("Login failed");
-            return;
-        }
-
-        localStorage.setItem(
-            "student",
-            JSON.stringify(data)
-        );
-
-        navigate("/student/dashboard");
+            localStorage.setItem("student", JSON.stringify(data));
+            navigate("/student/dashboard");
 
         } catch (error) {
             console.error(error);
@@ -55,12 +42,10 @@ function Login() {
 
             {/* NAVBAR */}
             <div className="navbar">
-        <div className="logo">Queuepert</div>
-
-    <div className="nav-buttons">
-        <button onClick={() => navigate("/admin/login")}>Admin</button>
-    </div>
-
+                <div className="logo">Queuepert</div>
+                <div className="nav-buttons">
+                    <button onClick={() => navigate("/admin/login")}>Admin</button>
+                </div>
             </div>
 
             {/* LOGIN BOX */}
@@ -73,8 +58,12 @@ function Login() {
                 <form onSubmit={handleSubmit}>
 
                     {/* EMAIL */}
-                    <label className="input-label">University E-mail</label>
+                    <label className="input-label" htmlFor="studentEmail">
+                        University E-mail
+                    </label>
                     <input
+                        id="studentEmail"
+                        name="studentEmail"
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -82,8 +71,12 @@ function Login() {
                     />
 
                     {/* PASSWORD */}
-                    <label className="input-label">Password</label>
+                    <label className="input-label" htmlFor="studentPassword">
+                        Password
+                    </label>
                     <input
+                        id="studentPassword"
+                        name="studentPassword"
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
@@ -93,29 +86,29 @@ function Login() {
                     {/* FORGOT PASSWORD */}
                     <div className="forgot-container">
                         <a href="#" onClick={(e) => {
-                        e.preventDefault();           // prevents page reload
-                        setShowForgot(!showForgot);   // toggle show/hide
-                    }}>
-                    Forgot password?
-                    </a>
+                            e.preventDefault();
+                            setShowForgot(!showForgot);
+                        }}>
+                            Forgot password?
+                        </a>
                     </div>
 
                     {showForgot && (
                         <div className="forgot-overlay">
-                        <div className="forgot-content">
-                        <p>Please contact the Technical Support Group (TSG) via Teams or proceed to their office
-                             (3rd Floor, NGE Building) to reset your password.</p>
-            
-                    <button 
-                        type="button" 
-                            onClick={() => setShowForgot(false)}
-                                className="action-btn"
-                    >
-                        Close
-                    </button>
-                    </div>
-                    </div>
-                )}
+                            <div className="forgot-content">
+                                <p>Please contact the Technical Support Group (TSG) via Teams
+                                    or proceed to their office (3rd Floor, NGE Building) to
+                                    reset your password.</p>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowForgot(false)}
+                                    className="action-btn"
+                                >
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     {/* LOGIN BUTTON */}
                     <button type="submit" className="action-btn">

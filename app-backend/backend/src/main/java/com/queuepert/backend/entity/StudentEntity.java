@@ -10,17 +10,19 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 @Entity
 @Table(name = "tblstudent")
 public class StudentEntity {
+
     @Id
     private String studentId;
     private String universityEmail;
+    @JsonIgnore
     private String password;
     private String firstName;
     private String lastName;
-    private char middleInitial;
+    private String middleInitial;
+
     private String course;
     private int yearLevel;
 
@@ -28,10 +30,10 @@ public class StudentEntity {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QueueTicketEntity> tickets = new ArrayList<>();
 
-    public StudentEntity() {
-    }
+    public StudentEntity() {}
 
-    public StudentEntity(String studentId, String universityEmail, String password, String firstName, String lastName, char middleInitial,
+    public StudentEntity(String studentId, String universityEmail, String password,
+            String firstName, String lastName, String middleInitial,
             String course, int yearLevel) {
         this.studentId = studentId;
         this.universityEmail = universityEmail;
@@ -43,64 +45,41 @@ public class StudentEntity {
         this.yearLevel = yearLevel;
     }
 
+    public String getStudentId() { return studentId; }
 
-    public String getStudentId() {
-        return studentId;
+    public String getUniversityEmail() { return universityEmail; }
+
+    @JsonIgnore
+    public String getPassword() { 
+        return password; 
     }
 
-    public String getPassword() {
-        return password;
+    public String getFirstName() { 
+        return firstName; 
     }
 
-
-
-    public String getUniversityEmail() {
-        return universityEmail;
+    public String getLastName() { 
+        return lastName; 
     }
 
-
-
-
-    public String getFirstName() {
-        return firstName;
+    public String getMiddleInitial() { 
+        return middleInitial; 
     }
 
-
-
-
-    public String getLastName() {
-        return lastName;
+    public String getCourse() { 
+        return course; 
     }
 
-
-
-
-    public char getMiddleInitial() {
-        return middleInitial;
+    public int getYearLevel() { 
+        return yearLevel; 
     }
 
-
-
-
-    public String getCourse() {
-        return course;
+    public List<QueueTicketEntity> getTickets() { 
+        return tickets; 
     }
 
-
-
-    public int getYearLevel() {
-        return yearLevel;
+    public void setTickets(List<QueueTicketEntity> tickets) { 
+        this.tickets = tickets; 
     }
-
-    public List<QueueTicketEntity> getTickets() {
-        return tickets;
-    }
-
-    public void setTickets(List<QueueTicketEntity> tickets) {
-        this.tickets = tickets;
-    }
-
-
-
 
 }

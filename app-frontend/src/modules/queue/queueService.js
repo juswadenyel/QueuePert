@@ -2,7 +2,7 @@
 // QueuePert – CIT-U Queue Management System
 // Service layer: all queue data fetching, mutations, and real-time helpers
 
-const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 // ─── Ticket / Queue ────────────────────────────────────────────────────────────
 

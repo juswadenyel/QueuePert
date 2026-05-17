@@ -6,17 +6,18 @@ function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-  const loadData = () => {
-    const data = JSON.parse(localStorage.getItem("transactions")) || [];
-    setTransactions(data);
-  };
+    // REMOVED: localStorage read — was never written to, always empty
+    // ADDED: fetch from backend API using logged-in student's ID
+    const student = JSON.parse(localStorage.getItem("student") || "{}");
+    const studentId = student.studentId;
 
-  loadData();
+    if (!studentId) return;
 
-  window.addEventListener("storage", loadData);
-
-  return () => window.removeEventListener("storage", loadData);
-}, []);
+    fetch(`http://localhost:8080/queue/student/${studentId}`)
+      .then(res => res.json())
+      .then(data => setTransactions(data))
+      .catch(err => console.error("Failed to load transactions:", err));
+  }, []);
 
   return (
     <div className="dashboard-page">
@@ -27,33 +28,40 @@ function TransactionHistory() {
       {/* CONTENT */}
       <div className="dashboard-wrapper">
 
-        <div className="panel" style={{ width: "800px" }}>
+        {/* CHANGED: fixed width="800px" → fluid width 90% with maxWidth for web responsiveness */}
+        <div className="panel" style={{ width: "90%", maxWidth: "800px" }}>
           <h2 className="panel-header">Transaction History</h2>
 
           {transactions.length === 0 ? (
             <p>No transactions found.</p>
           ) : (
-            <table className="history-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Transaction</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {transactions.map((t, index) => (
-                  <tr key={index}>
-                    <td>{t.id}</td>
-                    <td>{t.name}</td>
-                    <td>{t.transaction}</td>
-                    <td>{t.date}</td>
+            <div className="table-container">
+              <table className="history-table">
+                <thead>
+                  <tr>
+                    <th>Priority No.</th>
+                    <th>Transaction</th>
+                    <th>Semester</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Date</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+
+                <tbody>
+                  {transactions.map((t, index) => (
+                    <tr key={index}>
+                      <td>{t.priorityNumber}</td>
+                      <td>{t.transactionType}</td>
+                      <td>{t.semester}</td>
+                      <td>₱{t.amount}</td>
+                      <td>{t.status}</td>
+                      <td>{t.timeCreated ? new Date(t.timeCreated).toLocaleDateString() : "--"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
 
         </div>

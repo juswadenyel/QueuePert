@@ -1,69 +1,97 @@
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 
 const QueueContext = createContext();
-const STORAGE_KEY = "transactions";
 
-/* ---------------- HISTORY ---------------- */
-const saveToHistory = (item) => {
-  if (!item) return;
-  const existing = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  const updated = [
-    ...existing,
-    {
-      priorityNumber: item.priorityNumber,
-      name: item.name,
-      transaction: item.transaction,
-      date: new Date().toLocaleString()
-    }
-  ];
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-};
-
-/* ---------------- CONTEXT PROVIDER ---------------- */
 export const QueueProvider = ({ children }) => {
   const [queue, setQueue] = useState([]);
-  const [counters, setCounters] = useState(Array(8).fill(null).map(() => []));
   const [servedTimes, setServedTimes] = useState([]);
-  const [currentNumber, setCurrentNumber] = useState(1);
-  const [noShowCount, setNoShowCount] = useState(0); // Added for stats
+  const [counters, setCounters] = useState(Array(8).fill(null).map(() => []));
+  const [noShowCount, setNoShowCount] = useState(0);
+  const [latestTicket, setLatestTicket] = useState(null);
 
-  const isSystemEmpty = () => queue.length === 0 && counters.every((c) => c.length === 0);
+  useEffect(() => {
+  fetchWaitingTickets();
+  fetchServingTickets();
+  fetchNoShowCount();   
+  const interval = setInterval(() => {
+    fetchWaitingTickets();
+    fetchServingTickets();
+    fetchNoShowCount(); 
+  }, 3000);
+  return () => clearInterval(interval);
+}, []);
 
-  const generateQueueId = (num) => {
-    const letterIndex = Math.floor((num - 1) / 999);
-    const letter = String.fromCharCode(65 + letterIndex);
-    const number = ((num - 1) % 999) + 1;
-    return `${letter}${String(number).padStart(3, "0")}`;
-  };
+  async function fetchWaitingTickets() {
+    try {
+      const res = await fetch("http://localhost:8080/queue/waiting");
+      if (!res.ok) return;
+      const data = await res.json();
+      setQueue(prevQueue => data.map(ticket => {
+        const existing = prevQueue.find(q => q.queueId === ticket.queueId);
+        return {
+          queueId:          ticket.queueId,
+          priorityNumber:   ticket.priorityNumber,
+          studentId:        ticket.studentId,
+          fullName:         ticket.studentFullName,
+          course:           ticket.course,
+          yearLevel:        ticket.yearLevel,
+          transactionType:  ticket.transactionType,
+          semester:         ticket.semester,
+          amount:           ticket.amount,
+          status:           ticket.status,
+          timeCreated:      new Date(ticket.timeCreated).getTime(),
+          timeAddedToQueue: existing ? existing.timeAddedToQueue : Date.now(),
+        };
+      }));
+    } catch (err) {
+      console.error("Failed to load queue:", err);
+    }
+  }
 
-  const addQueue = (ticketData) => {
-  setCurrentNumber((prev) => {
-    const reset = isSystemEmpty();
-    const base = reset ? 1 : prev;
+  async function fetchServingTickets() {
+    try {
+      const res = await fetch("http://localhost:8080/queue/serving");
+      if (!res.ok) return;
+      const data = await res.json();
+      const newCounters = Array(8).fill(null).map(() => []);
+      data.forEach(ticket => {
+        if (!ticket.counterNumber || !ticket.priorityNumber) return;
+        const idx = parseInt(ticket.counterNumber) - 1;
+        if (idx >= 0 && idx < 8) {
+          newCounters[idx].push({
+            queueId:         ticket.queueId,
+            priorityNumber:  ticket.priorityNumber,
+            studentId:       ticket.studentId,
+            fullName:        ticket.studentFullName,
+            course:          ticket.course,
+            yearLevel:       ticket.yearLevel,
+            transactionType: ticket.transactionType,
+            semester:        ticket.semester,
+            amount:          ticket.amount,
+          });
+        }
+      });
+      setCounters(newCounters);
+    } catch (err) {
+      console.error("Failed to load serving tickets:", err);
+    }
+  }
 
-    const newItem = {
-      priorityNumber: generateQueueId(base),
+  async function fetchNoShowCount() {
+    try {
+    const res = await fetch("http://localhost:8080/queue/noshow/count");
+    if (!res.ok) return;
+    const count = await res.json();
+    setNoShowCount(count);
+    } catch (err) {
+      console.error("Failed to fetch noshow count:", err);
+    }
+  }
 
-      // student info
-      studentId: ticketData.studentId,
-      fullName: ticketData.fullName,
-      yearLevel: ticketData.yearLevel,
-      course: ticketData.course,
-
-      // queue ticket info
-      semester: ticketData.semester,
-      transactionType: ticketData.transactionType,
-      amount: ticketData.amount,
-
-      timeCreated: Date.now(),
-      status: "waiting"
-    };
-
-    setQueue((q) => [...q, newItem]);
-
-    return reset ? 2 : prev + 1;
-  });
-};
+  function getAdminId() {
+    const admin = JSON.parse(localStorage.getItem("admin") || "{}");
+    return admin.adminId || null;
+  }
 
   const addToCounter = (counterIndex = 0) => {
     if (counters[counterIndex].length >= 5) {
@@ -74,12 +102,28 @@ export const QueueProvider = ({ children }) => {
       if (prevQueue.length === 0) return prevQueue;
       const nextItem = prevQueue[0];
       const remainingQueue = prevQueue.slice(1);
-      setServedTimes((prev) => [...prev, Date.now() - nextItem.timeCreated]);
-      setCounters((prevCounters) => {
-        const newCounters = [...prevCounters];
-        newCounters[counterIndex] = [...newCounters[counterIndex], nextItem];
-        return newCounters;
-      });
+
+      const waitMs = nextItem.timeAddedToQueue
+        ? Date.now() - nextItem.timeAddedToQueue
+        : 0;
+
+      if (waitMs > 0) {
+        setServedTimes((prev) => [...prev, waitMs]);
+      }
+
+      fetch(`http://localhost:8080/queue/${nextItem.queueId}/status?status=serving&counterNumber=${counterIndex + 1}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Id": getAdminId(),
+        },
+      })
+      .then(() => {
+        fetchWaitingTickets();
+        fetchServingTickets();
+      })
+      .catch(err => console.error("Failed to update status:", err));
+
       return remainingQueue;
     });
   };
@@ -91,27 +135,23 @@ export const QueueProvider = ({ children }) => {
       if (current.length === 0) return prev;
       const servedItem = current.shift();
       updated[counterIndex] = current;
-      if (servedItem) {
-        saveToHistory(servedItem);
+
+      if (servedItem?.queueId) {
+        fetch(`http://localhost:8080/queue/${servedItem.queueId}/status?status=done`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Id": getAdminId(),
+          },
+        })
+        .then(() => {
+          fetchWaitingTickets();
+          fetchServingTickets();
+        })
+        .catch(err => console.error("Failed to update status:", err));
       }
       return updated;
     });
-  };
-
-  /* ---------------- DELETE LAST QUEUE ---------------- */
-  const deleteQueue = () => {
-    setQueue((prev) => prev.slice(0, -1));
-  };
-
-  /* ---------------- CANCEL SPECIFIC ITEM ---------------- */
-  const cancelQueue = (priorityNumber) => {
-    setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
-
-    setCounters((prev) =>
-      prev.map((counter) =>
-        counter.filter((item) => item.priorityNumber !== priorityNumber)
-      )
-    );
   };
 
   const markNoShow = (counterIndex = 0) => {
@@ -121,50 +161,81 @@ export const QueueProvider = ({ children }) => {
       if (current.length === 0) return prev;
       const skippedItem = current.shift();
       updated[counterIndex] = current;
-      if (skippedItem) {
-        saveToHistory({ ...skippedItem, transaction: "No Show" });
+
+      if (skippedItem?.queueId) {
+        fetch(`http://localhost:8080/queue/${skippedItem.queueId}/status?status=noshow`, {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Admin-Id": getAdminId(),
+          },
+        })
+        .then(() => {
+          fetchWaitingTickets();
+          fetchServingTickets();
+        })
+        .catch(err => console.error("Failed to update status:", err));
       }
       return updated;
     });
     setNoShowCount((prev) => prev + 1);
   };
 
-  function updateStudent(counterIndex, priorityNumber, updatedData) {
-  setCounters(prevCounters => {
-    const newCounters = [...prevCounters];
+  const cancelQueue = (priorityNumber) => {
+  if (!priorityNumber) return;
 
-    newCounters[counterIndex] =
-      newCounters[counterIndex].map(student =>
-        student.priorityNumber === priorityNumber
-          ? { ...student, ...updatedData }
-          : student
+  const ticketInQueue = queue.find(q => q.priorityNumber === priorityNumber);
+  const ticketInCounter = counters.flat().find(t => t.priorityNumber === priorityNumber);
+  const ticket = ticketInQueue || ticketInCounter;
+
+  setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
+  setCounters((prev) =>
+    prev.map((counter) =>
+      counter.filter((item) => item.priorityNumber !== priorityNumber)
+    )
+  );
+
+  if (ticket?.queueId) {
+    fetch(`http://localhost:8080/queue/${ticket.queueId}/cancel`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(() => {
+      fetchWaitingTickets();
+      fetchServingTickets();
+    })
+    .catch(err => console.error("Failed to cancel ticket:", err));
+  }
+};
+
+  const updateStudent = (counterIndex, priorityNumber, updatedData) => {
+    setCounters(prev => {
+      const updated = [...prev];
+      updated[counterIndex] = updated[counterIndex].map(item =>
+        item.priorityNumber === priorityNumber ? { ...item, ...updatedData } : item
       );
+      return updated;
+    });
+  };
 
-    return newCounters;
-  });
-}
-  /* ---------------- VALUES ---------------- */
   const value = {
-    queueList: queue,
-    latestTicket: queue[queue.length - 1] || null,
     counters,
-    waitingCount: queue.length,
-    nextInLine: queue[0]?.priorityNumber || "---",
-
-    averageWaitTime:
-      servedTimes.length > 0
-        ? Math.round(
-            servedTimes.reduce((a, b) => a + b, 0) /
-              servedTimes.length /
-              60000
-          )
-        : 0,
-    addQueue,
+    queueList:       queue,
+    waitingCount:    queue.length,
+    nextInLine:      queue[0]?.priorityNumber || "---",
+    noShowCount,
+    averageWaitTime: servedTimes.length > 0
+      ? Math.round(servedTimes.reduce((a, b) => a + b, 0) / servedTimes.length / 60000)
+      : 0,
     addToCounter,
     nextQueue,
-    cancelQueue,
     markNoShow,
-    updateStudent
+    cancelQueue,
+    fetchWaitingTickets,
+    fetchServingTickets,
+    updateStudent,
+    latestTicket,
+    setLatestTicket,
   };
 
   return <QueueContext.Provider value={value}>{children}</QueueContext.Provider>;

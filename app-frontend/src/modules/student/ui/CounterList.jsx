@@ -4,7 +4,7 @@ const CounterList = ({ counters }) => (
       <div key={i} className="queue-counter-row">
         <span>Counter {i + 1}</span>
         <span>
-          {arr.length ? arr.map(item => item.id).join(", ") : "--"}
+          {arr.length ? arr.map(item => item.priorityNumber).join(", ") : "--"}
         </span>
       </div>
     ))}

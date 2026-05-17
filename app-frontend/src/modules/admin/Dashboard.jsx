@@ -13,7 +13,7 @@ const Dashboard = () => {
   const [target, setTarget] = useState(0);
   const { 
     counters, queueList, waitingCount, nextInLine, averageWaitTime, noShowCount,
-    addQueue, nextQueue, addToCounter, markNoShow 
+    nextQueue, addToCounter, markNoShow, fetchWaitingTickets
   } = useQueue();
 
   const activeStudentsAtCounter = counters?.[target] || [];
@@ -28,12 +28,12 @@ const Dashboard = () => {
           {/* COLUMN 1: SIDEBAR STATS */}
           <div className="left-column">
             <AdminPanel 
-              target={target} setTarget={setTarget} counters={counters}
-              onAdd={() => addQueue({ name: "Walk-in", transaction: "General" })}
-              onAddToCounter={() => addToCounter(target)}
-              onNext={() => nextQueue(target)}
-              onNoShow={() => markNoShow(target)}
-            />
+            target={target} setTarget={setTarget} counters={counters}
+            onAddToCounter={() => addToCounter(target)}
+            onNext={() => nextQueue(target)}
+            onNoShow={() => markNoShow(target)}
+            onRefresh={fetchWaitingTickets}
+/>
 
             <StatBox label="NEXT IN LINE" value={nextInLine} />
             <StatBox label="waiting" value={waitingCount} />
@@ -47,7 +47,7 @@ const Dashboard = () => {
             <div className="panel target-header" style={{ padding: '20px', textAlign: 'center' }}>
               <h2 style={{ margin: 0, fontSize: '24px' }}>Now Serving:</h2>
               <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '10px' }}>
-                Counter {target + 1}: {activeStudentsAtCounter[0]?.id || "none"}
+                Counter {target + 1}: {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.priorityNumber).join(", ") : "Empty"}
               </p>
             </div>
             
