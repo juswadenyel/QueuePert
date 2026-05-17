@@ -44,7 +44,7 @@ public class StudentController {
             return ResponseEntity.status(404).body("Student not found");
         }
 
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(student);
     }
     
 }
