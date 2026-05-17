@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import com.queuepert.backend.entity.QueueTicketEntity;
 import com.queuepert.backend.repository.QueueTicketRepository;
 
