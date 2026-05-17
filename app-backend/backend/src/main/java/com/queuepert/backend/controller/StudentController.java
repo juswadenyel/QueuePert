@@ -1,5 +1,6 @@
 package com.queuepert.backend.controller;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,17 +17,20 @@ public class StudentController {
 
     StudentService studentService;
 
-     public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
     }
 
     @PostMapping("/login")
-    public StudentEntity loginStudent(@RequestBody StudentEntity student) {
-
-        return studentService.loginStudent(
+    public ResponseEntity<?> loginStudent(@RequestBody StudentEntity student) {
+        StudentEntity result = studentService.loginStudent(
             student.getUniversityEmail(),
             student.getPassword()
         );
+        if (result == null) {
+            return ResponseEntity.status(401).body("Invalid email or password");
+        }
+
+        return ResponseEntity.ok(result);
     }
 }
-
