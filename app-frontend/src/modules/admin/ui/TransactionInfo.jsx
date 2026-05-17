@@ -49,74 +49,74 @@ const TransactionInfo = ({ students, target }) => {
       </div>
 
       {editingStudent && (
-  <div className="edit-overlay">
-    <div className="edit-modal-container">
-      <h3>Edit Student Information</h3>
+        <div className="edit-overlay">
+          <div className="edit-modal-container">
+            <h3>Edit Student Information</h3>
 
-      <div className="edit-form-group">
+            <div className="edit-form-group">
 
-        <label>Full Name</label>
-        <input
-          name="fullName"
-          value={tempData.fullName || ""}
-          onChange={handleChange}
-        />
+              <label>Full Name</label>
+              <input
+                name="fullName"
+                value={tempData.fullName || ""}
+                onChange={handleChange}
+              />
 
-        <label>Student ID</label>
-        <input
-          name="studentId"
-          value={tempData.studentId || ""}
-          onChange={handleChange}
-        />
+              <label>Student ID</label>
+              <input
+                name="studentId"
+                value={tempData.studentId || ""}
+                onChange={handleChange}
+              />
 
-        <label>Course</label>
-        <input
-          name="course"
-          value={tempData.course || ""}
-          onChange={handleChange}
-        />
+              <label>Course</label>
+              <input
+                name="course"
+                value={tempData.course || ""}
+                onChange={handleChange}
+              />
 
-        <label>Year Level</label>
-        <input
-          name="yearLevel"
-          value={tempData.yearLevel || ""}
-          onChange={handleChange}
-        />
+              <label>Year Level</label>
+              <input
+                name="yearLevel"
+                value={tempData.yearLevel || ""}
+                onChange={handleChange}
+              />
 
-        <label>Semester</label>
-        <input
-          name="semester"
-          value={tempData.semester || ""}
-          onChange={handleChange}
-        />
+              <label>Semester</label>
+              <input
+                name="semester"
+                value={tempData.semester || ""}
+                onChange={handleChange}
+              />
 
-        <label>Transaction Type</label>
-        <input
-          name="transactionType"
-          value={tempData.transactionType || ""}
-          onChange={handleChange}
-        />
+              <label>Transaction Type</label>
+              <input
+                name="transactionType"
+                value={tempData.transactionType || ""}
+                onChange={handleChange}
+              />
 
-        <label>Amount</label>
-        <input
-          name="amount"
-          value={tempData.amount || ""}
-          onChange={handleChange}
-        />
+              <label>Amount</label>
+              <input
+                name="amount"
+                value={tempData.amount || ""}
+                onChange={handleChange}
+              />
 
-      </div>
+            </div>
 
-      <div className="modal-actions">
-        <button className="cancel-btn" onClick={handleClose}>
-          CANCEL
-        </button>
-        <button className="save-btn" onClick={handleSave}>
-          SAVE CHANGES
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+            <div className="modal-actions">
+              <button className="cancel-btn" onClick={handleClose}>
+                CANCEL
+              </button>
+              <button className="save-btn" onClick={handleSave}>
+                SAVE CHANGES
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

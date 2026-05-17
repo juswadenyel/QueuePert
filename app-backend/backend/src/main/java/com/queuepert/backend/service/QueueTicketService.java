@@ -2,6 +2,7 @@ package com.queuepert.backend.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import com.queuepert.backend.entity.QueueTicketEntity;
 import com.queuepert.backend.repository.QueueTicketRepository;
 
@@ -13,7 +14,15 @@ public class QueueTicketService {
         this.queueTicketRepository = ticket;
     }
 
-    public QueueTicketRepository createQueueTicket(QueueTicketEntity ticket) {
+    public QueueTicketEntity createQueueTicket(QueueTicketEntity ticket) {
         return queueTicketRepository.save(ticket);
+    }
+
+    public QueueTicketEntity getQueueTicketById(Integer id) {
+        return queueTicketRepository.findById(id).orElse(null);
+    }
+
+    public List<QueueTicketEntity> getAllTickets() {
+        return queueTicketRepository.findAll();
     }
 }
