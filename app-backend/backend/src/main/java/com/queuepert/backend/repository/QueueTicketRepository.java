@@ -17,4 +17,8 @@ public interface QueueTicketRepository extends JpaRepository<QueueTicketEntity, 
 
     @Query("SELECT MAX(q.priorityNumber) FROM QueueTicketEntity q")
     String findMaxPriorityNumber();
+
+    @Query("SELECT COUNT(q) FROM QueueTicketEntity q WHERE q.status = 'noshow'")
+    long countNoShow();
+    
 }

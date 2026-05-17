@@ -15,11 +15,14 @@ function QueueStatus({ queueData }) {
   } = useQueue();
 
   const [myTicket, setMyTicket] = useState(null);
-  const student = JSON.parse(localStorage.getItem("student") || "{}");
-  const studentId = student.studentId;
+  const [studentId, setStudentId] = useState(() => {
+    const student = JSON.parse(localStorage.getItem("student") || "{}");
+    return student.studentId || null;
+  });
 
   useEffect(() => {
     if (!studentId) return;
+
     fetch(`http://localhost:8080/queue/student/${studentId}`)
       .then(res => res.json())
       .then(data => {
@@ -32,12 +35,21 @@ function QueueStatus({ queueData }) {
 
   }, [studentId]);
 
+  useEffect(() => {
+    const handleStorage = () => {
+      const student = JSON.parse(localStorage.getItem("student") || "{}");
+      setStudentId(student.studentId || null);
+    };
+    window.addEventListener("storage", handleStorage);
+    return () => window.removeEventListener("storage", handleStorage);
+  }, []);
+
   const localTicket = myTicket?.priorityNumber || null;
 
   const handleCancel = () => {
     if (!localTicket) return;
     cancelQueue(localTicket);
-    setMyTicket(null); 
+    setMyTicket(null);
   };
 
   const currentServing =
@@ -45,28 +57,23 @@ function QueueStatus({ queueData }) {
 
   return (
     <div className="dashboard-page">
-
       <Navbar role="queue" />
-
       <div className="dashboard-wrapper-student">
         <div className="queue-status-layout">
-
           <QueueLeft
             localTicket={localTicket}
+            myTicket={myTicket}
             onCancel={handleCancel}
             nextInLine={nextInLine}
             waitingCount={waitingCount}
             averageWaitTime={averageWaitTime}
           />
-
           <QueueRight
             currentServing={currentServing}
             counters={counters}
           />
-
         </div>
       </div>
-
     </div>
   );
 }

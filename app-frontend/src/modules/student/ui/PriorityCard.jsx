@@ -1,4 +1,4 @@
-const PriorityCard = ({ localTicket, onCancel }) => (
+const PriorityCard = ({ localTicket, myTicket, onCancel }) => (
   <div className="queue-card priority-card">
     <p>Priority Number</p>
 
@@ -7,7 +7,7 @@ const PriorityCard = ({ localTicket, onCancel }) => (
     </div>
 
     <p className="priority-status">
-      {localTicket?.status || ""}
+      {myTicket?.status || ""}
     </p>
 
     <button

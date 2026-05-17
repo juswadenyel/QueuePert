@@ -10,14 +10,16 @@ export const QueueProvider = ({ children }) => {
   const [latestTicket, setLatestTicket] = useState(null);
 
   useEffect(() => {
+  fetchWaitingTickets();
+  fetchServingTickets();
+  fetchNoShowCount();   
+  const interval = setInterval(() => {
     fetchWaitingTickets();
     fetchServingTickets();
-    const interval = setInterval(() => {
-      fetchWaitingTickets();
-      fetchServingTickets();
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    fetchNoShowCount(); 
+  }, 3000);
+  return () => clearInterval(interval);
+}, []);
 
   async function fetchWaitingTickets() {
     try {
@@ -72,6 +74,17 @@ export const QueueProvider = ({ children }) => {
       setCounters(newCounters);
     } catch (err) {
       console.error("Failed to load serving tickets:", err);
+    }
+  }
+
+  async function fetchNoShowCount() {
+    try {
+    const res = await fetch("http://localhost:8080/queue/noshow/count");
+    if (!res.ok) return;
+    const count = await res.json();
+    setNoShowCount(count);
+    } catch (err) {
+      console.error("Failed to fetch noshow count:", err);
     }
   }
 
@@ -169,31 +182,31 @@ export const QueueProvider = ({ children }) => {
   };
 
   const cancelQueue = (priorityNumber) => {
-    if (!priorityNumber) return;
+  if (!priorityNumber) return;
 
-    const ticketInQueue = queue.find(q => q.priorityNumber === priorityNumber);
-    const ticketInCounter = counters.flat().find(t => t.priorityNumber === priorityNumber);
-    const ticket = ticketInQueue || ticketInCounter;
+  const ticketInQueue = queue.find(q => q.priorityNumber === priorityNumber);
+  const ticketInCounter = counters.flat().find(t => t.priorityNumber === priorityNumber);
+  const ticket = ticketInQueue || ticketInCounter;
 
-    setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
-    setCounters((prev) =>
-      prev.map((counter) =>
-        counter.filter((item) => item.priorityNumber !== priorityNumber)
-      )
-    );
+  setQueue((prev) => prev.filter((item) => item.priorityNumber !== priorityNumber));
+  setCounters((prev) =>
+    prev.map((counter) =>
+      counter.filter((item) => item.priorityNumber !== priorityNumber)
+    )
+  );
 
-    if (ticket?.queueId) {
-      fetch(`http://localhost:8080/queue/${ticket.queueId}`, {
-        method: "DELETE",
-        headers: { "X-Admin-Id": getAdminId() },
-      })
-      .then(() => {
-        fetchWaitingTickets();
-        fetchServingTickets();
-      })
-      .catch(err => console.error("Failed to cancel ticket:", err));
-    }
-  };
+  if (ticket?.queueId) {
+    fetch(`http://localhost:8080/queue/${ticket.queueId}/cancel`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+    })
+    .then(() => {
+      fetchWaitingTickets();
+      fetchServingTickets();
+    })
+    .catch(err => console.error("Failed to cancel ticket:", err));
+  }
+};
 
   const updateStudent = (counterIndex, priorityNumber, updatedData) => {
     setCounters(prev => {

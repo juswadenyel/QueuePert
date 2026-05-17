@@ -57,7 +57,6 @@ public class QueueTicketService {
         return queueTicketRepository.save(ticket);
     }
 
-    // ADDED: update editable ticket fields (transactionType, semester, amount) in DB
     public QueueTicketEntity updateDetails(int id, Map<String, Object> fields) {
         QueueTicketEntity ticket = queueTicketRepository.findById(id).orElse(null);
         if (ticket == null) return null;
@@ -70,17 +69,37 @@ public class QueueTicketService {
         return queueTicketRepository.save(ticket);
     }
 
+    public QueueTicketEntity cancelTicket(int id) {
+        QueueTicketEntity ticket = queueTicketRepository.findById(id).orElse(null);
+        if (ticket == null) return null;
+        ticket.setStatus("cancelled");
+        return queueTicketRepository.save(ticket);
+    }
+
     public void deleteTicket(int id) {
         queueTicketRepository.deleteById(id);
     }
 
     private int generateNextQueueId() {
-        return (int) queueTicketRepository.count() + 1;
+        return queueTicketRepository.findAll()
+            .stream()
+            .mapToInt(QueueTicketEntity::getQueueId)
+            .max()
+            .orElse(0) + 1;
     }
 
     private String generateNextPriorityNumber() {
-        String last = queueTicketRepository.findMaxPriorityNumber();
-        if (last == null) return "A001";
+        List<QueueTicketEntity> all = queueTicketRepository.findAll();
+        if (all.isEmpty()) return "A001";
+        String last = all.stream()
+            .map(QueueTicketEntity::getPriorityNumber)
+            .filter(p -> p != null && p.length() == 4)
+            .sorted((a, b) -> {
+                if (a.charAt(0) != b.charAt(0)) return a.charAt(0) - b.charAt(0);
+                return Integer.parseInt(a.substring(1)) - Integer.parseInt(b.substring(1));
+            })
+            .reduce((first, second) -> second)
+            .orElse("A000");
         char letter = last.charAt(0);
         int number = Integer.parseInt(last.substring(1));
         if (number >= 999) {
@@ -90,5 +109,9 @@ public class QueueTicketService {
             number++;
         }
         return String.format("%c%03d", letter, number);
+    }
+
+    public long getNoShowCount() {
+        return queueTicketRepository.countNoShow();
     }
 }
