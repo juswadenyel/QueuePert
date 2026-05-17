@@ -2,6 +2,8 @@ package com.queuepert.backend.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ public class StudentController {
         this.studentService = studentService;
     }
 
+    // Existing login endpoint — no changes here
     @PostMapping("/login")
     public ResponseEntity<?> loginStudent(@RequestBody StudentEntity student) {
         StudentEntity result = studentService.loginStudent(
