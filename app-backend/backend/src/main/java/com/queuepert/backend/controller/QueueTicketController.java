@@ -50,10 +50,14 @@ public class QueueTicketController {
         return ResponseEntity.ok(queueTicketService.getServingTickets());
     }
 
-    // ADDED: get all tickets for a specific student
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<QueueTicketEntity>> getTicketsByStudent(@PathVariable String studentId) {
         return ResponseEntity.ok(queueTicketService.getTicketsByStudentId(studentId));
+    }
+
+    @GetMapping("/noshow/count")
+    public ResponseEntity<Long> getNoShowCount() {
+        return ResponseEntity.ok(queueTicketService.getNoShowCount());
     }
 
     @GetMapping("/{id}")
@@ -78,7 +82,6 @@ public class QueueTicketController {
         return ResponseEntity.ok(updated);
     }
 
-    // ADDED: update ticket details (transactionType, semester, amount) from admin edit modal
     @PatchMapping("/{id}/details")
     public ResponseEntity<?> updateDetails(
             @PathVariable int id,
@@ -89,6 +92,13 @@ public class QueueTicketController {
             return ResponseEntity.status(401).body("Admin login required");
         }
         QueueTicketEntity updated = queueTicketService.updateDetails(id, fields);
+        if (updated == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updated);
+    }
+
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<?> cancelTicket(@PathVariable int id) {
+        QueueTicketEntity updated = queueTicketService.cancelTicket(id);
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
     }

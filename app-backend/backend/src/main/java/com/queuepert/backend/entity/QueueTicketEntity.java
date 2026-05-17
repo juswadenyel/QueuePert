@@ -81,11 +81,13 @@ public class QueueTicketEntity {
     public void setSemester(String semester) { this.semester = semester; }
 
     public String getStudentFullName() {
-        if (student == null) return null;
-        return student.getLastName() + ", " +
-            student.getFirstName() + " " +
-            student.getMiddleInitial() + ".";
+    if (student == null) return null;
+    String mi = student.getMiddleInitial();
+    if (mi != null && !mi.trim().isEmpty()) {
+        return student.getLastName() + ", " + student.getFirstName() + " " + mi + ".";
     }
+    return student.getLastName() + ", " + student.getFirstName();
+}
 
     public String getCourse() { return student != null ? student.getCourse() : null; }
     public Integer getYearLevel() { return student != null ? student.getYearLevel() : null; }
