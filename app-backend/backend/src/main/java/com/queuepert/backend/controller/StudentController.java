@@ -25,14 +25,18 @@ public class StudentController {
 
     // Existing login endpoint — no changes here
     @PostMapping("/login")
-    public StudentEntity loginStudent(@RequestBody StudentEntity student) {
-        return studentService.loginStudent(
+    public ResponseEntity<?> loginStudent(@RequestBody StudentEntity student) {
+        StudentEntity result = studentService.loginStudent(
             student.getUniversityEmail(),
             student.getPassword()
         );
+        if (result == null) {
+            return ResponseEntity.status(401).body("Invalid email or password");
+        }
+
+        return ResponseEntity.ok(result);
     }
 
-    // NEW — look up a student by their ID number
     @GetMapping("/{studentId}")
     public ResponseEntity<?> getStudentById(@PathVariable String studentId) {
         StudentEntity student = studentService.getStudentById(studentId);
@@ -41,4 +45,5 @@ public class StudentController {
         }
         return ResponseEntity.ok(student);
     }
+    
 }
