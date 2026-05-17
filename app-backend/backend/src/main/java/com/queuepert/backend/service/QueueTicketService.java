@@ -20,19 +20,6 @@ public class QueueTicketService {
     }
 
     public QueueTicketEntity createQueueTicket(QueueTicketEntity ticket) {
-<<<<<<< HEAD
-        return queueTicketRepository.save(ticket);
-    }
-
-    public QueueTicketEntity getQueueTicketById(Integer id) {
-        return queueTicketRepository.findById(id).orElse(null);
-    }
-
-    public List<QueueTicketEntity> getAllTickets() {
-        return queueTicketRepository.findAll();
-    }
-}
-=======
         ticket.setQueueId(generateNextQueueId());
         ticket.setPriorityNumber(generateNextPriorityNumber());
         ticket.setStatus("waiting");
@@ -129,4 +116,3 @@ public class QueueTicketService {
         return queueTicketRepository.countNoShow();
     }
 }
->>>>>>> b5c2fbf69c9d6fd79da76b51aaadf63ab2d5ae4b
