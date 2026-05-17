@@ -36,4 +36,15 @@ public class StudentController {
 
         return ResponseEntity.ok(result);
     }
+
+    @GetMapping("/{studentId}")
+    public ResponseEntity<?> getStudentById(@PathVariable String studentId) {
+        StudentEntity student = studentService.getStudentById(studentId);
+        if (student == null) {
+            return ResponseEntity.status(404).body("Student not found");
+        }
+
+        return ResponseEntity.ok(result);
+    }
+    
 }

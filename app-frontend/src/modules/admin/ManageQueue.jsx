@@ -43,14 +43,15 @@ export const QueueProvider = ({ children }) => {
           
           newCounters[counterIndex] = [...currentCounterList, nextItem.id];
           return prevQueue.slice(1);
-        } else {
-          if (currentCounterList.length > 0) {
-            currentCounterList.shift();
-          }
-          newCounters[counterIndex] = [...currentCounterList];
-          return prevQueue;
         }
-      });
+        else {
+            if (currentCounterList.length > 0) {
+              currentCounterList.shift();
+            }
+            newCounters[counterIndex] = [...currentCounterList];
+            return prevQueue;
+          }
+        });
 
       return newCounters;
     });

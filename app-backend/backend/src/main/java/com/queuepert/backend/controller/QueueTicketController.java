@@ -77,7 +77,7 @@ public class QueueTicketController {
         if (adminId == null) {
             return ResponseEntity.status(401).body("Admin login required");
         }
-        QueueTicketEntity updated = queueTicketService.updateStatus(id, status, counterNumber);
+        QueueTicketEntity updated = queueTicketService.updateStatus(id, status, counterNumber, adminId.toString());
         if (updated == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(updated);
     }

@@ -6,17 +6,27 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.queuepert.backend.entity.AdminEntity;
 import com.queuepert.backend.entity.QueueTicketEntity;
+import com.queuepert.backend.repository.AdminRepository;
 import com.queuepert.backend.repository.QueueTicketRepository;
+
 
 @Service
 public class QueueTicketService {
 
     private final QueueTicketRepository queueTicketRepository;
+    private final AdminRepository adminRepository;
+    
 
-    public QueueTicketService(QueueTicketRepository repo) {
+    public QueueTicketService(
+            QueueTicketRepository repo,
+            AdminRepository adminRepository
+    ) {
         this.queueTicketRepository = repo;
+        this.adminRepository = adminRepository;
     }
+
 
     public QueueTicketEntity createQueueTicket(QueueTicketEntity ticket) {
         ticket.setQueueId(generateNextQueueId());
@@ -46,7 +56,7 @@ public class QueueTicketService {
         return queueTicketRepository.findById(id).orElse(null);
     }
 
-    public QueueTicketEntity updateStatus(int id, String newStatus, String counterNumber) {
+    public QueueTicketEntity updateStatus(int id, String newStatus, String counterNumber, String adminId) {
         QueueTicketEntity ticket = queueTicketRepository.findById(id).orElse(null);
         if (ticket == null) return null;
         ticket.setStatus(newStatus);
@@ -54,6 +64,16 @@ public class QueueTicketService {
             ticket.setTimeServed(LocalDateTime.now());
             if (counterNumber != null) ticket.setCounterNumber(counterNumber);
         }
+
+        if (ticket.getAdmin() == null && adminId != null) {
+            AdminEntity admin = adminRepository.findById(adminId)
+                    .orElse(null);
+
+            if (admin != null) {
+                ticket.setAdmin(admin);
+            }
+        }
+
         return queueTicketRepository.save(ticket);
     }
 
