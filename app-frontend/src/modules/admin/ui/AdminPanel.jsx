@@ -142,7 +142,7 @@ const AdminPanel = ({ target, setTarget, counters, onAddToCounter, onNext, onNoS
 
             {/* STEP 1 — Student ID + Check button */}
             <label style={labelStyle}>Student ID</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexDirection: 'column'}}>
               <input
                 name="studentId"
                 type="text"
