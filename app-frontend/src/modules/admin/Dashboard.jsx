@@ -8,7 +8,7 @@ import StatBox from "./ui/StatBox";
 import ServingDisplay from "./ui/ServingDisplay";
 import UnqueuedGrid from "./ui/UnqueuedGrid";
 import TransactionInfo from "./ui/TransactionInfo";
-import DailyReportModal from "./ui/DailyReportModal";
+import DailyReportModal from "./DailyReportModal";
 
 const Dashboard = () => {
   const [target, setTarget] = useState(0);
