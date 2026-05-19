@@ -3,6 +3,8 @@ package com.queuepert.backend.service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.time.LocalDate;
+import java.util.HashMap;
 
 import org.springframework.stereotype.Service;
 
@@ -134,4 +136,47 @@ public class QueueTicketService {
     public long getNoShowCount() {
         return queueTicketRepository.countNoShow();
     }
+
+    public Map<String, Object> getDailyReport(String adminId) {
+
+    LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
+    LocalDateTime endOfDay = LocalDate.now().atTime(23, 59, 59);
+
+    List<QueueTicketEntity> tickets =
+        queueTicketRepository.findByAdmin_AdminIdAndStatusAndTimeServedBetween(
+            adminId,
+            "done",
+            startOfDay,
+            endOfDay
+        );
+
+    double totalAmount = 0;
+
+    for (QueueTicketEntity ticket : tickets) {
+        if (ticket.getAmount() != null) {
+            totalAmount += ticket.getAmount();
+        }
+    }
+
+    Map<String, Object> report = new HashMap<>();
+
+    if (!tickets.isEmpty()) {
+        AdminEntity admin = tickets.get(0).getAdmin();
+
+        report.put("adminName",
+            admin.getLastName() + ", " +
+            admin.getFirstName() + " " +
+            admin.getMiddleInitial() + "."
+        );
+
+        report.put("adminId", admin.getAdminId());
+    }
+
+    report.put("date", LocalDate.now());
+    report.put("totalTransactions", tickets.size());
+    report.put("totalAmount", totalAmount);
+    report.put("tickets", tickets);
+
+    return report;
+}
 }

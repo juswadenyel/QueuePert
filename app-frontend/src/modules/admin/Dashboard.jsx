@@ -8,9 +8,11 @@ import StatBox from "./ui/StatBox";
 import ServingDisplay from "./ui/ServingDisplay";
 import UnqueuedGrid from "./ui/UnqueuedGrid";
 import TransactionInfo from "./ui/TransactionInfo";
+import DailyReportModal from "./ui/DailyReportModal";
 
 const Dashboard = () => {
   const [target, setTarget] = useState(0);
+  const [showReport, setShowReport] = useState(false);
   const { 
     counters, queueList, waitingCount, nextInLine, averageWaitTime, noShowCount,
     nextQueue, addToCounter, markNoShow, fetchWaitingTickets
@@ -20,7 +22,9 @@ const Dashboard = () => {
   
   return (
     <div className="dashboard-page">
-      <Navbar role="admin" />
+      <Navbar role="admin" 
+        onDailyReport={() => setShowReport(true)}
+      />
 
       <div className="dashboard-wrapper">
         <div className="dashboard-layout">
@@ -73,6 +77,11 @@ const Dashboard = () => {
           <div className="right-column">
             <UnqueuedGrid queueList={queueList} />
           </div>
+
+          <DailyReportModal
+                open={showReport}
+                onClose={() => setShowReport(false)}
+            />
 
         </div>
       </div>

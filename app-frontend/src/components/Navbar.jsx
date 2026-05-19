@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import ProfileMenu from "../modules/student/ProfileMenu"; 
 // adjust path if needed
 
-function Navbar({ role, variant }) {
+function Navbar({ role, variant,onDailyReport }) {
   const navigate = useNavigate();
 
   return (
@@ -44,7 +44,7 @@ function Navbar({ role, variant }) {
         {/* ADMIN */}
         {role === "admin" && (
           <>
-            <button onClick={() => alert("Daily Report Generated")}>
+            <button onClick={onDailyReport}>
               View Daily Report
             </button>
 

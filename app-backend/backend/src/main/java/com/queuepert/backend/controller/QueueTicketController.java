@@ -109,4 +109,13 @@ public class QueueTicketController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/report/daily")
+    public ResponseEntity<?> getDailyReport(
+            @RequestHeader("X-Admin-Id") String adminId) {
+
+        return ResponseEntity.ok(
+            queueTicketService.getDailyReport(adminId)
+        );
+    }
+
 }
