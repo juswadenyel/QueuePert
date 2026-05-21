@@ -3,8 +3,8 @@ import React from "react";
 const ServingDisplay = ({ target, counters }) => {
   return (
     <div className="panel serving-panel" style={{ flex: 1 }}>
-      <h3 className="serving-title" style={{ fontSize: '24px', marginBottom: '20px' }}>Now Serving</h3>
-      <div className="counter-list" style={{ width: '100%', gap: '0' }}>
+      <h3 className="serving-title" style={{ fontSize: '30px', marginBottom: '20px' }}>Now Serving</h3>
+      <div className="counter-list" style={{ fontSize: '20px', width: '100%', gap: '0' }}>
         {counters.map((arr, i) => (
           <div 
             key={i} 
