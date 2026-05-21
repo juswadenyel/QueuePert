@@ -1,10 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useQueue } from "../../../context/QueueContext";
 
 const TransactionInfo = ({ students, target }) => {
-  const { updateStudent } = useQueue();
+  const { updateStudent, reorderCounter } = useQueue();
   const [editingStudent, setEditingStudent] = useState(null);
   const [tempData, setTempData] = useState({});
+
+  const [orderedStudents, setOrderedStudents] = useState(students || []);
+  const dragItem     = useRef(null);
+  const dragOverItem = useRef(null);
+  const isDirty      = useRef(false);
+  // ADDED: ref to always hold the latest ordered list
+  // needed because React state is async — handleDragEnd reads stale orderedStudents without this
+  const orderedRef   = useRef(students || []);
+
+  useEffect(() => {
+    if (!isDirty.current) {
+      setOrderedStudents(students || []);
+      orderedRef.current = students || []; // ADDED: keep ref in sync with poll reset
+    } else {
+      const prevIds = orderedStudents.map(s => s.queueId).sort().join(",");
+      const newIds  = (students || []).map(s => s.queueId).sort().join(",");
+      if (prevIds !== newIds) {
+        setOrderedStudents(students || []);
+        orderedRef.current = students || []; // ADDED: keep ref in sync on force reset
+        isDirty.current = false;
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [students]);
+
+  const handleDragStart = (index) => {
+    dragItem.current = index;
+  };
+
+  const handleDragEnter = (index) => {
+    if (dragItem.current === null || dragItem.current === index) return;
+    const newList = [...orderedStudents];
+    const dragged = newList.splice(dragItem.current, 1)[0];
+    newList.splice(index, 0, dragged);
+    dragItem.current = index;
+    setOrderedStudents(newList);
+    // ADDED: keep ref in sync so handleDragEnd always reads the latest order
+    orderedRef.current = newList;
+  };
+
+  // CHANGED: uses orderedRef.current instead of orderedStudents
+  // orderedStudents is stale in handleDragEnd due to React async state
+  // orderedRef always holds the latest dragged order
+  const handleDragEnd = () => {
+    isDirty.current      = true;
+    dragItem.current     = null;
+    dragOverItem.current = null;
+    // CHANGED: was reorderCounter(target, orderedStudents) — stale state
+    // now uses orderedRef.current which is always up to date
+    reorderCounter(target, orderedRef.current);
+  };
 
   const handleOpenEdit = (student) => {
     setEditingStudent(student);
@@ -13,8 +64,6 @@ const TransactionInfo = ({ students, target }) => {
 
   const handleClose = () => setEditingStudent(null);
 
-  // CHANGED: now also calls backend PATCH /queue/{id}/details to persist changes to DB
-  // so the next poll doesn't overwrite local changes back to original
   const handleSave = () => {
     const admin = JSON.parse(localStorage.getItem("admin") || "{}");
 
@@ -32,7 +81,6 @@ const TransactionInfo = ({ students, target }) => {
     })
       .then(res => res.json())
       .then(() => {
-        // ADDED: update local state after successful DB save
         updateStudent(target, editingStudent.priorityNumber, tempData);
         handleClose();
       })
@@ -50,14 +98,59 @@ const TransactionInfo = ({ students, target }) => {
   return (
     <div className="panel transaction-info">
       <h3 className="panel-header">Transaction Information:</h3>
-      <div className="transaction-list">
-        {students && students.length > 0 ? (
-          students.map((student, index) => (
-            <div key={student.priorityNumber || index} className="info-details">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <strong>#{index + 1} - {student.priorityNumber}</strong>
+
+      {orderedStudents.length > 1 && (
+        <p style={{ fontSize: "11px", opacity: 0.6, textAlign: "center", marginBottom: "8px" }}>
+          ☰ Drag cards to reorder serving priority
+        </p>
+      )}
+
+      <div className="transaction-list" style={{
+        overflowY: "auto",
+        flex: 1,
+        paddingRight: "6px",
+      }}>
+        {orderedStudents.length > 0 ? (
+          orderedStudents.map((student, index) => (
+            <div
+              key={student.priorityNumber || index}
+              className="info-details"
+              draggable
+              onDragStart={() => handleDragStart(index)}
+              onDragEnter={() => handleDragEnter(index)}
+              onDragEnd={handleDragEnd}
+              onDragOver={(e) => e.preventDefault()}
+              style={{
+                cursor: "grab",
+                borderLeft: index === 0
+                  ? "5px solid #7A1E2C"
+                  : "5px solid rgba(0,0,0,0.08)",
+                transition: "border 0.2s, transform 0.15s",
+                userSelect: "none",
+              }}
+              onMouseEnter={e => e.currentTarget.style.transform = "scale(1.01)"}
+              onMouseLeave={e => e.currentTarget.style.transform  = "scale(1)"}
+            >
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <span style={{ opacity: 0.4, fontSize: "16px", cursor: "grab" }}>⠿</span>
+                  <strong>
+                    {index === 0 && (
+                      <span style={{
+                        background: "#7A1E2C", color: "white",
+                        fontSize: "10px", fontWeight: "bold",
+                        padding: "2px 6px", borderRadius: "4px",
+                        marginRight: "6px",
+                      }}>
+                        NEXT
+                      </span>
+                    )}
+                    #{index + 1} - {student.priorityNumber}
+                  </strong>
+                </div>
                 <button onClick={() => handleOpenEdit(student)} className="edit-btn">EDIT</button>
               </div>
+
               <p><strong>Name:</strong> {student.fullName}</p>
               <p><strong>ID:</strong> {String(student.studentId)}</p>
               <p><strong>Course:</strong> {student.course}</p>
@@ -87,7 +180,6 @@ const TransactionInfo = ({ students, target }) => {
               />
 
               <label>Student ID</label>
-              {/* FIXED: force String to prevent negative number display */}
               <input
                 name="studentId"
                 value={String(tempData.studentId || "")}
@@ -101,7 +193,6 @@ const TransactionInfo = ({ students, target }) => {
                 onChange={handleChange}
               />
 
-              {/* CHANGED: Year Level from text input to dropdown */}
               <label>Year Level</label>
               <select name="yearLevel" value={tempData.yearLevel || ""} onChange={handleChange}>
                 <option value="">-- Select --</option>
@@ -111,7 +202,6 @@ const TransactionInfo = ({ students, target }) => {
                 <option value="4">4</option>
               </select>
 
-              {/* CHANGED: Semester from text input to dropdown */}
               <label>Semester</label>
               <select name="semester" value={tempData.semester || ""} onChange={handleChange}>
                 <option value="">-- Select --</option>
@@ -120,7 +210,6 @@ const TransactionInfo = ({ students, target }) => {
                 <option value="Mid Year Term">Mid Year Term</option>
               </select>
 
-              {/* CHANGED: Transaction Type from text input to dropdown */}
               <label>Transaction Type</label>
               <select name="transactionType" value={tempData.transactionType || ""} onChange={handleChange}>
                 <option value="">-- Select --</option>

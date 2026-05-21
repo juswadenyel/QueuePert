@@ -36,6 +36,7 @@ public class QueueTicketEntity {
     private String counterNumber;
     private LocalDateTime timeCreated;
     private LocalDateTime timeServed;
+    private int sortOrder = 0;
 
     public QueueTicketEntity() {}
 
@@ -79,6 +80,9 @@ public class QueueTicketEntity {
 
     public String getSemester() { return semester; }
     public void setSemester(String semester) { this.semester = semester; }
+
+    public int getSortOrder() { return sortOrder; }
+    public void setSortOrder(int sortOrder) { this.sortOrder = sortOrder; }
 
     public String getStudentFullName() {
     if (student == null) return null;

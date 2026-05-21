@@ -3,10 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 function ProfileMenu({ showHistory}) {
   const [open, setOpen] = useState(false);
-  const menuRef = useRef(null); // 👈 reference to the menu
+  const menuRef = useRef(null);
   const navigate = useNavigate();
 
-  // 👇 Detect clicks outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {

@@ -16,6 +16,10 @@ public interface QueueTicketRepository extends JpaRepository<QueueTicketEntity, 
 
     List<QueueTicketEntity> findByStudent_StudentId(String studentId);
 
+    List<QueueTicketEntity> findByStatusOrderBySortOrderAsc(String status);
+
+     List<QueueTicketEntity> findByStatusAndCounterNumber(String status, String counterNumber);
+
     @Query("SELECT MAX(q.priorityNumber) FROM QueueTicketEntity q")
     String findMaxPriorityNumber();
 

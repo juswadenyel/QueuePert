@@ -483,12 +483,12 @@ select:focus { outline: none; border-color: #7A1E2C; }
     overflow-x: hidden;
 }
 
-.table-container::-webkit-scrollbar { width: 8px; }
-.table-container::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 10px; }
-.table-container::-webkit-scrollbar-thumb { 
-    background: #7A1E2C; 
-    border-radius: 10px;
-    border: 2px solid #C9A227; 
+.transaction-list::-webkit-scrollbar { width: 8px; }
+.transaction-list::-webkit-scrollbar-track { background: rgba(0,0,0,0.05); border-radius: 10px; }
+.transaction-list::-webkit-scrollbar-thumb {
+  background: #7A1E2C;
+  border-radius: 10px;
+  border: 2px solid #C9A227;
 }
 
 .info-details {
@@ -705,8 +705,6 @@ select:focus { outline: none; border-color: #7A1E2C; }
     letter-spacing: 0.5px;
 }
 
-
-
 /* TABLE */
 .report-table {
     width: 100%;
@@ -738,3 +736,4 @@ select:focus { outline: none; border-color: #7A1E2C; }
     flex-direction: column;
     gap: 12px;
 }
+

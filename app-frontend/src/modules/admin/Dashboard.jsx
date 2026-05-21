@@ -14,7 +14,7 @@ const Dashboard = () => {
   const [target, setTarget] = useState(0);
   const [showReport, setShowReport] = useState(false);
   const { 
-    counters, queueList, waitingCount, nextInLine, averageWaitTime, noShowCount,
+    counters, queueList, waitingCount, nextInLine, averageWaitTime,
     nextQueue, addToCounter, markNoShow, fetchWaitingTickets
   } = useQueue();
 
@@ -42,7 +42,6 @@ const Dashboard = () => {
             <StatBox label="NEXT IN LINE" value={nextInLine} />
             <StatBox label="waiting" value={waitingCount} />
             <StatBox label="avg. wait" value={`${averageWaitTime} min`} />
-            <StatBox label="no shows" value={noShowCount || 0} />
           </div>
 
           {/* COLUMN 2: MAIN CENTER AREA */}

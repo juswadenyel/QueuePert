@@ -2,7 +2,6 @@ const TransactionTable = ({ tickets }) => (
     <div className="report-breakdown">
 
         <h3>Transaction Breakdown</h3>
-
         <table className="report-table">
             <thead>
                 <tr>
