@@ -47,7 +47,7 @@ public class QueueTicketService {
     }
 
     public List<QueueTicketEntity> getServingTickets() {
-        return queueTicketRepository.findByStatus("serving");
+        return queueTicketRepository.findByStatusOrderBySortOrderAsc("serving");
     }
 
     public List<QueueTicketEntity> getTicketsByStudentId(String studentId) {
@@ -100,6 +100,18 @@ public class QueueTicketService {
 
     public void deleteTicket(int id) {
         queueTicketRepository.deleteById(id);
+    }
+
+    public void reorderCounter(String counterNumber, List<Integer> queueIds) {
+        List<QueueTicketEntity> tickets =
+            queueTicketRepository.findByStatusAndCounterNumber("serving", counterNumber);
+
+        for (QueueTicketEntity ticket : tickets) {
+            int position = queueIds.indexOf(ticket.getQueueId());
+            ticket.setSortOrder(position >= 0 ? position : Integer.MAX_VALUE);
+        }
+
+        queueTicketRepository.saveAll(tickets);
     }
 
     private int generateNextQueueId() {

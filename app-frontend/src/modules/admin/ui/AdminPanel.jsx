@@ -122,8 +122,6 @@ const AdminPanel = ({ target, setTarget, counters, onAddToCounter, onNext, onNoS
 
       <button className="action-btn" onClick={onNext}>Next Queue</button>
       <button className="action-btn no-show-btn" onClick={onNoShow}>Mark No Show</button>
-      <button className="action-btn" onClick={onRefresh}>↻ Refresh Queue</button>
-
       {/* Walk-in Modal */}
       {showWalkIn && (
         <div style={{

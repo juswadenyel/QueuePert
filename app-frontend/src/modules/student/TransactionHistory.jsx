@@ -6,8 +6,6 @@ function TransactionHistory() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    // REMOVED: localStorage read — was never written to, always empty
-    // ADDED: fetch from backend API using logged-in student's ID
     const student = JSON.parse(localStorage.getItem("student") || "{}");
     const studentId = student.studentId;
 

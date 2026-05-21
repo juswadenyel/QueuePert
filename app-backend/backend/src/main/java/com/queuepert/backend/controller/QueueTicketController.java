@@ -109,6 +109,25 @@ public class QueueTicketController {
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/counter/{counterNumber}/reorder")
+    public ResponseEntity<?> reorderCounter(
+            @PathVariable String counterNumber,
+            @RequestBody Map<String, List<Integer>> body,
+            @RequestHeader(value = "X-Admin-Id", required = false) Integer adminId) {
+
+        if (adminId == null) {
+            return ResponseEntity.status(401).body("Admin login required");
+        }
+
+        List<Integer> queueIds = body.get("queueIds");
+        if (queueIds == null || queueIds.isEmpty()) {
+            return ResponseEntity.badRequest().body("queueIds must not be empty");
+        }
+
+        queueTicketService.reorderCounter(counterNumber, queueIds);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/report/daily")
     public ResponseEntity<?> getDailyReport(
             @RequestHeader("X-Admin-Id") String adminId) {
