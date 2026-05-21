@@ -36,9 +36,7 @@ const Dashboard = () => {
             onAddToCounter={() => addToCounter(target)}
             onNext={() => nextQueue(target)}
             onNoShow={() => markNoShow(target)}
-            onRefresh={fetchWaitingTickets}
-/>
-
+            onRefresh={fetchWaitingTickets}/>
             <StatBox label="NEXT IN LINE" value={nextInLine} />
             <StatBox label="waiting" value={waitingCount} />
             <StatBox label="avg. wait" value={`${averageWaitTime} min`} />
@@ -46,31 +44,23 @@ const Dashboard = () => {
 
           {/* COLUMN 2: MAIN CENTER AREA */}
           <div className="center-column">
-            {/* LARGE NOW SERVING HEADER */}
-            <div className="panel target-header" style={{ padding: '20px', textAlign: 'center' }}>
-              <h2 style={{ margin: 0, fontSize: '24px' }}>Now Serving:</h2>
-              <p style={{ fontSize: '18px', fontWeight: 'bold', marginTop: '10px' }}>
-                Counter {target + 1}: {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.priorityNumber).join(", ") : "Empty"}
-              </p>
-            </div>
-            
-            <div className="workspace-row">
-              {/* TRANSACTION INFO */}
-              <TransactionInfo students={activeStudentsAtCounter} target={target} />
-              
-              {/* RIGHT-CENTER SUB-PANELS */}
-              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <div className="panel" style={{ padding: '15px' }}>
-                  <h4 style={{ fontSize: '18px', marginBottom: '15px' }}>YOUR QUEUE (Counter {target + 1}):</h4>
-                    <p style={{ fontWeight: 'bold', fontSize: '25px', color: '#000' }}>
-                      {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.priorityNumber).join(", ") : "--"}
-                    </p>
-                  </div>
-
-                <ServingDisplay target={target} counters={counters} />
-              </div>
-            </div>
+  
+            {/* 1. YOUR QUEUE PANEL - NOW AT THE TOP */}
+            <div className="panel full-width-panel" style={{ padding: '15px' }}>
+            <h4 style={{ fontSize: '28px', marginBottom: '10px' }}>YOUR QUEUE (Counter {target + 1}):</h4>
+            <p style={{ fontWeight: 'bold', fontSize: '25px', color: '#000', margin: 0 }}>
+              {activeStudentsAtCounter.length > 0 ? activeStudentsAtCounter.map(s => s.priorityNumber).join(", ") : "--"}
+            </p>
           </div>
+  
+          {/* 2. THE MIDDLE WORKSPACE ROW - HOUSES TRANSACTION INFO & NOW SERVING LIST */}
+          <div className="workspace-row flex-grow-row">
+              {/* TRANSACTION INFO PANEL */}
+              <TransactionInfo students={activeStudentsAtCounter} target={target} />
+              {/* NOW SERVING PANEL */}
+              <ServingDisplay target={target} counters={counters} />
+          </div>
+        </div>
 
           {/* COLUMN 3: LOBBY */}
           <div className="right-column">

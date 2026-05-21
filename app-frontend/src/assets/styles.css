@@ -156,12 +156,46 @@ select:focus { outline: none; border-color: #7A1E2C; }
 }
 
 /* --- SCROLL FUNCTION TARGETS --- */
-.left-column, .center-column, .right-column {
+.left-column, .right-column {
     display: flex;
     flex-direction: column;
     gap: 15px;
     height: 100%;
     overflow: hidden;
+}
+.center-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.full-width-panel p {
+    font-weight: bold;
+    font-size: 25px;
+    color: #000;
+    margin: 0;
+    width: 100%;
+    max-width: 100%; 
+    white-space: nowrap;      
+    overflow: hidden;          
+    text-overflow: ellipsis;   
+}
+
+.flex-grow-row {
+    display: flex;
+    gap: 20px;
+    flex: 1; 
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.flex-grow-row > div, .flex-grow-row > .panel {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 .right-column .panel {
@@ -203,45 +237,34 @@ select:focus { outline: none; border-color: #7A1E2C; }
     flex: 1;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding-top: 30px !important;
+    padding-top: 20px !important;
+    height: 100%; 
 }
 
-.serving-title {
-    font-size: 36px;
-    font-weight: bold;
-    margin-bottom: 30px;
-    text-align: center;
+.serving-panel .counter-list {
     width: 100%;
-}
-
-.serving-number { 
-    font-size: 20px;
-    font-weight: bold;
-    color: #7A1E2C;
-    margin-top: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.serving-container {
-    width: 100%;
-    display: flex;
-    justify-content: flex-start;
-    padding-left: 50px;
-}
-
-.counter-list {
     display: flex;
     flex-direction: column;
-    gap: 40px;
-    text-align: left;
+    font-weight: bolder;
+    flex: 1; 
+    justify-content: space-between; 
+    gap: 0; 
+    padding: 10px 0;
 }
 
-.counter-row {
-    font-size: 20px;
-    font-weight: bold;
+/* 3. THE INDIVIDUAL ROWS */
+.serving-panel .counter-row {
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 12px 0;
+    flex: 1; 
+    display: flex;
+    align-items: center; 
+    justify-content: center; 
+}
+
+.serving-panel .counter-row:last-child {
+    border-bottom: none;
 }
 
 .active-target {
@@ -249,7 +272,7 @@ select:focus { outline: none; border-color: #7A1E2C; }
     border-radius: 10px;
     padding: 5px 15px;
     margin-left: -15px;
-    font-size: 20px;
+    font-size: 28px;
     color: #7A1E2C;
 }
 
@@ -472,7 +495,7 @@ select:focus { outline: none; border-color: #7A1E2C; }
 /* --- NEW TRANSACTION INFO & WORKSPACE STYLES (APPENDED) --- */
 /* ======================================================== */
 
-.panel {
+.panel{
     display: flex;
     flex-direction: column;
 }
@@ -657,14 +680,45 @@ select:focus { outline: none; border-color: #7A1E2C; }
     align-items: center;
     background: #f8f9fa;
     color: #7A1E2C;
+    flex-shrink: 0; 
 }
 
-/* SCROLL AREA */
 .report-content {
-    padding: 20px;
-    overflow-y: auto;
+    padding: 24px;
+    overflow-y: auto !important; 
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
+.report-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.report-content::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 10px;
+}
+
+/* Custom Maroon Draggable Thumb */
+.report-content::-webkit-scrollbar-thumb {
+    background: #7A1E2C;
+    border-radius: 10px;
+    border: 2px solid #ffffff; 
+}
+
+.report-content::-webkit-scrollbar-thumb:hover {
+    background: #5c1521; 
+}
+
+.report-table th {
+    position: sticky;
+    top: -24px;
+    background: #fafafa;
+    z-index: 2;
+    box-shadow: inset 0 -1px 0 #eee; 
+}
 /* SUMMARY GRID */
 .report-summary-grid {
     display: grid;
@@ -673,36 +727,29 @@ select:focus { outline: none; border-color: #7A1E2C; }
     margin-bottom: 20px;
 }
 
-/* CARD */
 .summary-card {
     background: #f6f7f9;
-    padding: 8px 10px;
+    padding: 12px;
     border-radius: 8px;
-    text-align: center;
-    justify-content: center;
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .summary-card .label {
     font-size: 12px;
     color: black;
+    text-align: center;
 }
 
 .summary-card .value {
     font-size: 18px;
     font-weight: bold;
-    color:#7A1E2C
-}
-
-/* CASHIER CARD */
-.cashier-card {
-    text-align: left;
-}
-
-.cashier-card .value.small {
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    color: #7A1E2C;
+    text-align: center;
+    margin-top: auto;
+    margin-bottom: auto; 
 }
 
 /* TABLE */
