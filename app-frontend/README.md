@@ -1,70 +1,163 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# QueuePert 🎫
+ 
+A queue management system for university cashier offices. Students request queue tickets online, while admin staff manage counters, serve transactions, and generate daily reports — all in real time.
+ 
+---
+ 
+## Tech Stack
+ 
+| Layer     | Technology                          |
+|-----------|-------------------------------------|
+| Frontend  | React 19, React Router v7           |
+| Backend   | Spring Boot 3.5, Spring Data JPA    |
+| Database  | MySQL                               |
+| Language  | Java 17, JavaScript                 |
+ 
+---
+ 
+## Project Structure
+ 
+```
+QueuePert-main/
+├── app-backend/
+│   └── backend/                  # Spring Boot REST API
+│       ├── src/main/java/com/queuepert/backend/
+│       │   ├── controller/       # REST endpoints
+│       │   ├── entity/           # JPA entities
+│       │   ├── repository/       # Spring Data repositories
+│       │   ├── service/          # Business logic
+│       │   └── config/           # CORS, exception handling
+│       └── src/main/resources/
+│           └── application.properties
+└── app-frontend/
+    └── src/
+        ├── modules/
+        │   ├── auth/             # Student & admin login
+        │   ├── student/          # Dashboard, queue form, status, history
+        │   ├── admin/            # Admin panel, manage queue, reports
+        │   └── queue/            # Queue display, request, tracker
+        └── context/
+            └── QueueContext.jsx  # Global queue state
+```
+ 
+---
+ 
+## Prerequisites
+ 
+- **Java 17+**
+- **Node.js 18+** and npm
+- **MySQL 8+**
+---
+ 
+## Database Setup
+ 
+1. Create the database in MySQL:
+```sql
+CREATE DATABASE queuepert;
+```
+ 
+2. The tables are auto-generated by Spring Boot on first run (`ddl-auto=update`).
+---
+ 
+## Backend Setup
+ 
+```bash
+cd app-backend/backend
+ 
+# Configure your database credentials in:
+# src/main/resources/application.properties
+ 
+./mvnw spring-boot:run
+```
+ 
+The API runs at `http://localhost:8080`.
+ 
+**Default `application.properties` values:**
+```properties
+spring.datasource.url=jdbc:mysql://localhost:3306/queuepert
+spring.datasource.username=root
+spring.datasource.password=admin
+server.port=8080
+```
+ 
+Update the username and password to match your MySQL setup.
+ 
+---
+ 
+## Frontend Setup
+ 
+```bash
+cd app-frontend
+ 
+npm install
+npm start
+```
+ 
+The app runs at `http://localhost:3000`.
+ 
+---
+ 
+## Features
+ 
+### Students
+- Log in with student ID
+- Request a queue ticket by selecting transaction type and semester
+- Submit a priority form (PWD, senior citizen, pregnant, etc.)
+- View real-time queue status and counter assignment
+- Track transaction history
+### Admin
+- Log in to a dedicated admin panel
+- Manage multiple counters simultaneously
+- Call next ticket, mark as served, or flag no-shows
+- Reorder queue within a counter
+- Update ticket details mid-transaction
+- Generate and view daily transaction reports
+---
+ 
+## API Endpoints
+ 
+| Method | Endpoint                         | Description                         |
+|--------|----------------------------------|-------------------------------------|
+| POST   | `/queue/request`                 | Submit a new queue ticket           |
+| GET    | `/queue/all`                     | Get all tickets                     |
+| GET    | `/queue/waiting`                 | Get all waiting tickets             |
+| GET    | `/queue/serving`                 | Get tickets currently being served  |
+| GET    | `/queue/student/{studentId}`     | Get tickets for a specific student  |
+| GET    | `/queue/{id}`                    | Get a ticket by ID                  |
+| PATCH  | `/queue/{id}/status`             | Update ticket status (admin only)   |
+| PATCH  | `/queue/{id}/details`            | Update ticket details (admin only)  |
+| PATCH  | `/queue/{id}/cancel`             | Cancel a ticket                     |
+| PATCH  | `/queue/counter/{n}/reorder`     | Reorder a counter's queue (admin)   |
+| GET    | `/queue/report/daily`            | Get daily report (admin only)       |
+| DELETE | `/queue/{id}`                    | Delete a ticket                     |
+ 
+Admin-only routes require an `X-Admin-Id` header.
+ 
+---
+ 
+## Routes (Frontend)
+ 
+| Path                  | Description              |
+|-----------------------|--------------------------|
+| `/student/login`      | Student login page       |
+| `/admin/login`        | Admin login page         |
+| `/student/dashboard`  | Student dashboard        |
+| `/student/form`       | Queue request form       |
+| `/student/queue`      | Queue status tracker     |
+| `/student/history`    | Transaction history      |
+| `/admin/dashboard`    | Admin control panel      |
+ 
+---
+ 
+## Contributing
+ 
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m "Add your feature"`
+4. Push to the branch: `git push origin feature/your-feature`
+5. Open a Pull Request
+---
+ 
+## License
+ 
+This project is for academic use.
